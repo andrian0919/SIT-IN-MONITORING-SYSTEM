@@ -1,0 +1,2099 @@
+/* General Body Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('UC.jpg'); /* Add background image */
+    background-size: cover; /* Ensure the image covers the entire background */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+/* Container */
+.container {
+    width: 30%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Group */
+.form-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    width: 200px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.form-group input,
+.form-group select {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 300px;
+}
+
+/* Button */
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Login Container */
+.login-container {
+    background-color: rgba(255, 255, 255, 0.8); /* Add a semi-transparent white background */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 450px;
+    text-align: center;
+    margin: 20px; /* Add a gray margin around the container */
+    border: 2px solid gray; /* Add a gray border */
+}
+
+.login-container h2 {
+    margin-bottom: 20px;
+}
+
+.login-container input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.login-container button {
+    width: 50%;
+    padding: 10px;
+    background-color: blue;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.login-container button:hover {
+    background-color: gray;
+}
+
+/* Error Message */
+.error-message {
+    color: red;
+    margin-top: 10px;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.tabs button {
+    background: none;
+    border: none;
+    color: blue;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.tabs button.active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* Form Section */
+.form-section {
+    display: none;
+}
+
+.form-section.active {
+    display: block;
+}
+
+/* Logo */
+.logo {
+    width: 100px; /* Adjust the size as needed */
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Select Dropdown */
+select {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+/* Student Dashboard Styles */
+
+.dashboard-container h2 {
+    text-align: center;
+}
+
+.dashboard-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.dashboard-container ul li {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-radius: 5px;
+}
+
+.dashboard-container ul li a {
+    text-decoration: none;
+    color: blue;
+    font-weight: bold;
+}
+
+.dashboard-container ul li a:hover {
+    color: gray;
+}
+
+.history_dashboard-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 60%;
+    margin: auto;
+}
+
+/* General table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+/* History dashboard specific table styles */
+.history_dashboard-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.history_dashboard-container th, 
+.history_dashboard-container td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.history_dashboard-container th {
+    background-color: #333;
+    color: white;
+    font-weight: bold;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Reservation Styles */
+.reservation-container {
+    width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: auto;
+    padding: 30px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reservation-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.reservation-container .form-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.reservation-container .form-group label {
+    font-weight: bold;
+    width: 30%;
+    text-align: left;
+}
+
+.reservation-container .form-group input,
+.reservation-container .form-group select {
+    width: 65%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.reservation-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+/* Student Information Section */
+.student-info {
+    text-align: left;
+    margin-bottom: 20px;
+    padding-right: 140px; /* Create space for the profile picture */
+}
+
+.student-info p {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+/* Actions Section */
+.actions {
+    display: flex;
+    justify-content: space-around;
+}
+
+.button {
+    padding: 10px 20px;
+    text-decoration: none;
+    background-color: rgb(9, 9, 243);
+    color: white;
+    border-radius: 5px;
+}
+
+.button:hover {
+    background-color: gray; /* Gray hover effect */
+    color: white; /* White text on hover */
+}
+
+.button.logout {
+    background-color: red;
+}
+
+/* Back Button */
+.back-button {
+    background-color: white !important; /* Force white background */
+    border: 2px solid gray; /* Gray border */
+    color: blue !important; /* Ensure text is gray */
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 16px;
+    display: block; /* Make it take up the full width */
+    width: 60%; /* Match Reserve button width */
+    margin: 10px auto 0; /* Center and add spacing */
+    text-align: center;
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+.back-button:hover {
+    background-color: gray !important; /* Gray background on hover */
+    color: white !important; /* White text on hover */
+}
+
+/* Password Container */
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 85%;
+    margin: 10px auto;
+}
+
+/* Input Field for Password */
+.password-container input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding-right: 40px; /* Space for the eye icon */
+}
+
+/* Eye Icon Styling */
+.password-container .toggle-password {
+    position: absolute;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z' fill='%23555555'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+/* Eye "Closed" Effect */
+.password-container .toggle-password.closed {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath d='M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z' fill='%23555555'/%3E%3C/svg%3E");
+}
+
+.remember-forgot {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+.remember-forgot label {
+    display: flex;
+    align-items: center;
+}
+
+.remember-forgot input[type="checkbox"] {
+    margin-left: 5px; /* Space between checkbox and text */
+}
+
+.remember-forgot a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+}
+
+.forgot-password-container {
+    width: 100%;
+    max-width: 400px; /* Adjust to your desired container width */
+    margin: 0 auto; /* Centers the container horizontally */
+    padding: 20px;
+    background-color: #f9f9f9; /* Light background color */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Light shadow for a soft card effect */
+    text-align: center;
+}
+
+.forgot-password-container h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.forgot-password-container form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.forgot-password-container input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.forgot-password-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.forgot-password-container button:hover {
+    background-color: #0056b3;
+}
+
+.back-button {
+    display: inline-block;
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #007bff;
+    text-decoration: none;
+    border: 1px solid white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s;
+}
+
+.back-button:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Header Container */
+.header-container {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: blue;
+    padding: 15px 30px;
+    color: white;
+    z-index: 100;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Adds spacing between the logos */
+}
+
+.main-logo {
+    height: 60px; /* Adjust as needed */
+    width: auto;
+    position: relative;
+    left: 85px;
+}
+
+.uc-logo {
+    height: 45px; /* Set a different height */
+    width: auto;
+    position: relative;
+    left: 85px;
+}
+
+.psits-logo {
+    height: 45px; /* Set a different height */
+    width: auto;
+    position: relative;
+    left: 85px;
+}
+
+.header-title h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-right: none;
+    background-color: blue;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.nav-links a:hover {
+    background-color: gray;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    width: 30%;
+    text-align: center;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.student-info {
+    text-align: left;
+    margin-bottom: 20px;
+    padding-right: 140px; /* Create space for the profile picture */
+}
+
+.student-info p {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.profile-pic {
+    width: 120px;
+    height: 120px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+.profile-pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.logo {
+    flex-shrink: 0; /* Prevents logo from shrinking */
+}
+
+.student-logo {
+    position: absolute;
+    right: 10%;
+    top: 15%;
+    left: 55%;
+    height: 150px; /* Adjust as needed */
+    width: auto;
+    mix-blend-mode: multiply; /* Removes white background */
+}
+/* Buttons inside the actions section */
+.button {
+    padding: 12px 20px;
+    font-size: 16px;
+    text-decoration: none;
+    color: white;
+    background-color: #007bff;
+    border-radius: 4px;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+.Logout {
+    text-decoration: none;
+    color: white;
+    background-color: red;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+    /* Fix header and body */
+    body {
+        height: auto;
+        min-height: 100vh;
+        display: block;
+        overflow-x: hidden;
+        box-sizing: border-box;
+        background-attachment: fixed;
+    }
+    
+    .header-container {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: center;
+        padding: 8px 5px;
+        position: fixed;
+        height: 40px; /* Set fixed height */
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 100;
+        box-sizing: border-box;
+    }
+    
+    .header-left {
+        display: flex;
+        align-items: center;
+        margin-left: 2px;
+    }
+    
+    .header-title h1 {
+        font-size: 16px;
+        margin: 0;
+        white-space: nowrap;
+        padding-left: 5px;
+    }
+    
+    /* Fix header logo positioning */
+    .header-container .logo {
+        position: absolute !important;
+        top: 50% !important;
+        right: 10px !important;
+        left: auto !important;
+        transform: translateY(-50%) !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+        margin: 0 !important;
+        gap: 3px !important;
+        z-index: 999 !important;
+    }
+    
+    .main-logo, .uc-logo, .psits-logo {
+        height: 22px;
+        width: auto;
+        position: static;
+        left: auto;
+        margin: 0;
+    }
+    
+    /* Mobile menu toggle */
+    .mobile-menu-toggle {
+        display: block !important;
+        position: relative;
+        font-size: 18px;
+        background: none;
+        border: none;
+        color: white;
+        padding: 0;
+        margin: 0 3px 0 0;
+    }
+    
+    /* Mobile menu styles */
+    .nav-links {
+        position: fixed; /* Change to fixed to cover full height */
+        top: 40px; /* Match the header height */
+        left: 0;
+        width: 25%; /* 1/4 width as requested */
+        background-color: blue;
+        z-index: 100;
+        padding: 0;
+        margin: 0;
+        box-shadow: 4px 0 6px rgba(0,0,0,0.1);
+        transform: translateX(-100%); /* Start off-screen */
+        transition: transform 0.3s ease-in-out, opacity 0.3s ease; /* Animation for sliding in */
+        visibility: hidden; /* Hide the menu instead of display:none */
+        overflow-y: auto; /* Allow scrolling if menu is taller than screen */
+        height: calc(100vh - 40px); /* Full height minus header */
+        opacity: 0;
+        display: flex; /* Enable flex layout */
+        flex-direction: column; /* Stack menu items vertically */
+    }
+    
+    .nav-links.active {
+        transform: translateX(0); /* Slide in from left */
+        visibility: visible; /* Show the menu */
+        opacity: 1;
+    }
+    
+    .nav-links a {
+        width: 100%;
+        padding: 15px 0;
+        margin: 0;
+        text-align: center;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        font-size: 16px;
+        display: block;
+        transition: background-color 0.2s ease; /* Animation for hover effect */
+    }
+    
+    .nav-links a:hover {
+        background-color: rgba(255,255,255,0.1);
+    }
+    
+    .nav-links a:last-child {
+        border-bottom: none;
+    }
+    
+    /* Mobile dashboard layout */
+    .dashboard-wrapper {
+        flex-direction: column;
+        justify-content: center;
+        padding: 10px;
+        margin-top: 45px; /* Adjusted for new header height */
+        width: 95%;
+        max-width: 100%;
+    }
+    
+    .dashboard-container,
+    .lab-rules,
+    .announcements {
+        width: 100%;
+        position: static;
+        right: 0;
+        margin: 0 auto 20px auto;
+        max-height: none;
+        box-sizing: border-box;
+    }
+    
+    .dashboard-container {
+        order: 1;
+        padding: 15px;
+    }
+    
+    .lab-rules {
+        order: 2;
+    }
+    
+    .announcements {
+        order: 3;
+    }
+    
+    /* Mobile student info section - maintaining right-side profile */
+    .student-info {
+        position: relative;
+        padding: 15px;
+        padding-right: 120px; /* Space for profile on right */
+        margin-bottom: 0;
+    }
+    
+    .student-info p {
+        font-size: 14px;
+        margin: 8px 0;
+        text-align: left;
+    }
+    
+    /* Fix profile picture positioning to ensure it stays on the right */
+    .dashboard-container .profile-pic {
+        position: absolute !important;
+        top: 20% !important;
+        right: 15px !important;
+        left: auto !important;
+        width: 80px !important;
+        height: 80px !important;
+        border: 2px solid #fff !important;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2) !important;
+        z-index: 999 !important;
+        transform: none !important;
+    }
+    
+    .profile-pic img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    
+    .lab-rules-content, .announcements-content {
+        max-height: 200px;
+    }
+    
+    .button {
+        width: 100%;
+        margin-top: 5px;
+    }
+}
+
+/* For even smaller screens */
+@media (max-width: 480px) {    
+    /* Menu modifications for very small screens */
+    .nav-links {
+        width: 35%; /* Slightly wider on very small screens, but still narrower than before */
+        top: 35px; /* Match the header height for small screens */
+        height: calc(100vh - 35px); /* Full height minus header */
+    }
+    
+    body {
+        padding: 0;
+        margin: 0;
+        background-position: center bottom;
+    }
+    
+    .header-container {
+        padding: 5px 3px;
+        height: 35px;
+    }
+    
+    .header-left {
+        margin-left: 0;
+    }
+    
+    .header-title h1 {
+        font-size: 14px;
+        padding-left: 2px;
+    }
+    
+    .mobile-menu-toggle {
+        font-size: 16px;
+        margin-right: 2px;
+    }
+    
+    .logo {
+        right: 5px;
+    }
+    
+    .main-logo, .uc-logo, .psits-logo {
+        height: 18px;
+        width: auto;
+        margin: 0;
+    }
+    
+    .nav-links a {
+        padding: 12px 0;
+        font-size: 15px;
+    }
+    
+    .dashboard-wrapper {
+        margin-top: 40px;
+        padding: 5px;
+        width: 98%;
+    }
+    
+    .dashboard-container, .lab-rules, .announcements {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+    }
+    
+    /* Fix profile picture positioning on smaller screens */
+    .dashboard-container .profile-pic {
+        width: 70px !important;
+        height: 70px !important;
+        right: 10px !important;
+        top: 20% !important;
+    }
+    
+    .student-info {
+        padding: 10px;
+        padding-right: 90px; /* Reduced padding for smaller screens */
+    }
+    
+    .student-info p {
+        font-size: 12px;
+        margin: 5px 0;
+    }
+    
+    /* Improve readability of lab rules */
+    .lab-rules h3, .announcements h3 {
+        font-size: 16px;
+    }
+    
+    .lab-rules-content, .announcements-content {
+        max-height: 150px;
+        font-size: 12px;
+    }
+    
+    /* Fix header logo positioning for smaller screens */
+    .header-container .logo {
+        right: 5px !important;
+    }
+}
+
+/* Fix for orientation change */
+@media (orientation: landscape) and (max-width: 768px) {
+    .dashboard-wrapper {
+        margin-top: 80px;
+    }
+    
+    .lab-rules-content, .announcements-content {
+        max-height: 120px;
+    }
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.admin-container{
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 70%;
+    margin: auto;
+}
+
+.admin-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 5%;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: blue;
+    padding: 15px 30px;
+    color: white;
+    font-size: 13px;
+    
+}
+
+.admin-header h1 {
+    margin: 0;
+}
+
+.admin-logout {
+    text-decoration: none;
+    color: white;
+    background-color: blue;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: medium;
+}
+
+.admin-logout:hover {
+    background-color: blue;
+}
+
+.sit-in-reports-header {
+    text-decoration: none;
+    color: white;
+    background-color: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: medium;
+    position: relative;
+    left: 430px;
+}
+
+.reports:hover {
+    background-color: blue;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+
+}
+
+th {
+    background-color: #444;
+    color: white;
+}
+
+.session-end-btn {
+    background-color: blue;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.session-end-btn:hover {
+    background-color: darkblue;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    width: 100px;
+    font-size: 16px; /* Adjust text size */
+    padding: 10px 20px; /* Adjust padding */
+    margin: 0 5px; /* Adjust spacing */
+    border: none;
+    background-color: blue;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.pagination button:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: darkblue;
+}
+
+#pageNumber {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    width: 300px;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.report-section{
+    position: fixed;
+    width: 20%;
+    height: 5%;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: blue;
+    padding: 15px 30px;
+    color: white;  
+
+}
+
+.search-container input {
+    width: 100%;
+    padding: 10px 10px 10px 40px; /* Space for the icon */
+    border: 1px solid black;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: black;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 50px;
+    background-color: white;
+    padding: 10px;
+    margin-top: 5px;
+}
+
+.dropdown-content select, .dropdown-content button {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.dashboard-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 80px auto 20px;
+    padding: 20px;
+}
+
+.lab-rules {
+    width: 30%;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-height: 350px; /* Adjust height to fit layout */
+    overflow: hidden; /* Prevents expanding beyond max height */
+}
+
+.announcements{
+    width: 30%;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-height: 350px; /* Adjust height to fit layout */
+    overflow: hidden; /* Prevents expanding beyond max height */
+}
+
+.lab-rules h3, .announcements h3 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* Scrollable Lab Rules Content */
+.lab-rules-content {
+    max-height: 250px; /* Controls the scrollable area */
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* Custom Scrollbar */
+.lab-rules-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.lab-rules-content::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 3px;
+}
+
+.lab-rules-content::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+/* Custom Scrollbar */
+.announcements-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.announcements-content::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 3px;
+}
+
+.announcements-content::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+.announcements-container {
+    padding: 20px;
+    width: 600px;
+}
+
+.announcement-form {
+    margin-bottom: 20px;
+}
+
+.announcement-form textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.announcement-form button {
+    padding: 10px 20px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 400px;
+    position: relative;
+    left: 20%;
+
+}
+
+.announcement-form button:hover {
+    background-color: blue;
+}
+
+.table-container {
+    max-height: 300px; /* Adjust the height as needed */
+    overflow-y: auto; /* Enables vertical scrolling */
+    border: 1px solid #ddd; /* Optional: Adds a border for visibility */
+}
+
+/* Ensure table layout remains fixed */
+#announcementsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+    table-layout: fixed;
+}
+
+#announcementsTable th, #announcementsTable td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+#announcementsTable th {
+    background-color: #444;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+/* Button styling */
+.actions {
+    display: flex;
+    gap: 5px; /* Space between buttons */
+    justify-content: flex-end; /* Align buttons to the right */
+}
+
+.edit, .delete {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit {
+    background-color: blue;
+    color: white;
+}
+
+.delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.announcement-header {
+    text-decoration: none;
+    color: white;
+    background-color: blue;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: medium;
+    position: relative;
+    left: 5%;
+}
+
+.edit-announcement-container {
+    display: none; /* Start hidden */
+    position: fixed; /* Keep it on top */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    background: white;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    z-index: 1000; /* Ensure it appears on top */
+    border: 2px solid red; /* DEBUG: Make it visible */
+}
+
+.edit-announcement-container textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.edit-announcement-container button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-announcement-container button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+}
+
+.edit-announcement-container button[type="button"] {
+    background-color: #dc3545;
+    color: white;
+}
+
+.announcements-content {
+    max-height: 300px; /* Adjust height as needed */
+    overflow-y: auto;
+    padding: 10px;
+}
+
+/* static/style.css */
+.feedback-container {
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    max-width: 800px;
+}
+
+#feedbackTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#feedbackTable th, #feedbackTable td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+#feedbackTable th {
+    background-color: #444;
+    color: white;
+}
+
+#feedbackTable tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.back-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
+.feedback-header {
+    text-decoration: none;
+    color: white;
+    background-color: blue;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: medium;
+    position: relative;
+    left: 10%;
+}
+
+.reservation-header {
+    text-decoration: none;
+    color: white;
+    background-color: blue;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: medium;
+    position: relative;
+    left: 8%;
+}
+
+/* static/style.css */
+.feedback-form-container {
+    margin: 20px auto;
+    padding: 40px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: white;
+    max-width: 600px;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    position: absolute;
+    left: 34%;
+}
+
+#feedbackFormContent {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#feedbackText {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical; /* Allow vertical resizing */
+}
+
+#feedbackFormContent button {
+    padding: 10px 20px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#feedbackFormContent button:hover {
+    background-color: #0056b3;
+}
+
+/* Mobile Navigation Hamburger Menu */
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+}
+
+@media (max-width: 768px) {
+    /* Mobile menu styles */
+    .nav-links {
+        position: fixed; /* Change to fixed to cover full height */
+        top: 40px; /* Match the header height */
+        left: 0;
+        width: 25%; /* 1/4 width as requested */
+        background-color: blue;
+        z-index: 100;
+        padding: 0;
+        margin: 0;
+        box-shadow: 4px 0 6px rgba(0,0,0,0.1);
+        transform: translateX(-100%); /* Start off-screen */
+        transition: transform 0.3s ease-in-out, opacity 0.3s ease; /* Animation for sliding in */
+        visibility: hidden; /* Hide the menu instead of display:none */
+        overflow-y: auto; /* Allow scrolling if menu is taller than screen */
+        height: calc(100vh - 40px); /* Full height minus header */
+        opacity: 0;
+        display: flex; /* Enable flex layout */
+        flex-direction: column; /* Stack menu items vertically */
+    }
+    
+    .nav-links.active {
+        transform: translateX(0); /* Slide in from left */
+        visibility: visible; /* Show the menu */
+        opacity: 1;
+    }
+    
+    .nav-links a {
+        width: 100%;
+        padding: 15px 0;
+        margin: 0;
+        text-align: center;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        font-size: 16px;
+        display: block;
+        transition: background-color 0.2s ease; /* Animation for hover effect */
+    }
+    
+    .nav-links a:hover {
+        background-color: rgba(255,255,255,0.1);
+    }
+    
+    .nav-links a:last-child {
+        border-bottom: none;
+    }
+}
+
+/* For even smaller screens */
+@media (max-width: 480px) {    
+    /* Menu modifications for very small screens */
+    .nav-links {
+        width: 35%; /* Slightly wider on very small screens, but still narrower than before */
+        top: 35px; /* Match the header height for small screens */
+        height: calc(100vh - 35px); /* Full height minus header */
+    }
+    
+    body {
+        padding: 0;
+        margin: 0;
+        background-position: center bottom;
+    }
+    
+    .header-container {
+        padding: 5px 3px;
+        height: 35px;
+    }
+    
+    .header-left {
+        margin-left: 0;
+    }
+    
+    .header-title h1 {
+        font-size: 14px;
+        padding-left: 2px;
+    }
+    
+    .mobile-menu-toggle {
+        font-size: 16px;
+        margin-right: 2px;
+    }
+    
+    .logo {
+        right: 5px;
+    }
+    
+    .main-logo, .uc-logo, .psits-logo {
+        height: 18px;
+        width: auto;
+        margin: 0;
+    }
+    
+    .nav-links a {
+        padding: 12px 0;
+        font-size: 15px;
+    }
+    
+    .dashboard-wrapper {
+        margin-top: 40px;
+        padding: 5px;
+        width: 98%;
+    }
+    
+    .dashboard-container, .lab-rules, .announcements {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+    }
+    
+    /* Adjust profile for very small screens */
+    .profile-pic {
+        width: 70px;
+        height: 70px;
+        right: 20px;
+        top: 30%;
+    }
+    
+    .student-info {
+        padding: 10px;
+        padding-right: 90px; /* Reduced padding for smaller screens */
+    }
+    
+    .student-info p {
+        font-size: 12px;
+        margin: 5px 0;
+    }
+    
+    /* Improve readability of lab rules */
+    .lab-rules h3, .announcements h3 {
+        font-size: 16px;
+    }
+    
+    .lab-rules-content, .announcements-content {
+        max-height: 150px;
+        font-size: 12px;
+    }
+}
+
+/* Fix for orientation change */
+@media (orientation: landscape) and (max-width: 768px) {
+    .dashboard-wrapper {
+        margin-top: 80px;
+    }
+    
+    .lab-rules-content, .announcements-content {
+        max-height: 120px;
+    }
+}
+
+/* Edit Record Mobile Styles - Updated with correct class names */
+@media (max-width: 768px) {
+    body {
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    .container {
+        width: 90%;
+        margin: 60px auto 20px;
+        padding: 15px;
+        box-sizing: border-box;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .container form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .container .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+
+    .container .form-group label {
+        width: 100%;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    .container .form-group input,
+    .container .form-group select,
+    .container .dropdown {
+        width: 100%;
+        padding: 8px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .container button {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        width: 95%;
+        margin: 50px auto 15px;
+        padding: 10px;
+    }
+
+    .container .form-group label {
+        font-size: 13px;
+    }
+
+    .container .form-group input,
+    .container .form-group select,
+    .container .dropdown {
+        padding: 6px;
+        font-size: 13px;
+    }
+
+    .container button {
+        padding: 10px;
+        font-size: 14px;
+        margin-top: 15px;
+    }
+}
+
+/* Reservation Mobile Styles */
+@media (max-width: 768px) {
+    .reservation-container {
+        width: 90%;
+        max-width: none;
+        margin: 60px auto 20px;
+        padding: 15px;
+        box-sizing: border-box;
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+    }
+    
+    .reservation-container h2 {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .reservation-container .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+    
+    .reservation-container .form-group label {
+        width: 100%;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+    
+    .reservation-container .form-group input,
+    .reservation-container .form-group select {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+    }
+    
+    .reservation-container button {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        margin-top: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .reservation-container {
+        width: 95%;
+        margin: 50px auto 15px;
+        padding: 10px;
+        border-width: 1px;
+    }
+    
+    .reservation-container h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+    
+    .reservation-container .form-group {
+        margin-bottom: 10px;
+    }
+    
+    .reservation-container .form-group label {
+        font-size: 13px;
+        margin-bottom: 3px;
+    }
+    
+    .reservation-container .form-group input,
+    .reservation-container .form-group select {
+        padding: 8px;
+        font-size: 13px;
+    }
+    
+    .reservation-container button {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+/* History Mobile Styles */
+@media (max-width: 768px) {
+    .history_dashboard-container {
+        width: 90%;
+        margin: 60px auto 20px;
+        padding: 15px;
+        box-sizing: border-box;
+        overflow-x: auto;
+    }
+    
+    .history_dashboard-container h2 {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .history_dashboard-container table {
+        width: 100%;
+        font-size: 14px;
+    }
+    
+    .history_dashboard-container th,
+    .history_dashboard-container td {
+        padding: 8px 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .history_dashboard-container {
+        width: 95%;
+        margin: 50px auto 15px;
+        padding: 10px;
+    }
+    
+    .history_dashboard-container h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+    
+    .history_dashboard-container table {
+        font-size: 12px;
+    }
+    
+    .history_dashboard-container th,
+    .history_dashboard-container td {
+        padding: 6px 4px;
+        white-space: nowrap;
+    }
+    
+    /* Add horizontal scrolling for tables on very small screens */
+    .history_dashboard-container .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Feedback Form Mobile Styles */
+@media (max-width: 768px) {
+    .feedback-form-container {
+        width: 90%;
+        max-width: none;
+        padding: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 50%;
+        margin: 0;
+        z-index: 1000;
+        position: fixed;
+    }
+    
+    .feedback-form-container #feedbackText {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+    
+    .feedback-form-container button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        font-size: 16px;
+    }
+    
+    .feedback-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .feedback-form-container {
+        width: 95%;
+        padding: 15px;
+    }
+    
+    .feedback-form-container #feedbackText {
+        font-size: 13px;
+        padding: 8px;
+    }
+    
+    .feedback-form-container button {
+        padding: 10px;
+        font-size: 14px;
+    }
+    
+    .feedback-btn {
+        padding: 5px 8px;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+}
+
+/* Login Mobile Styles */
+@media (max-width: 768px) {
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-size: cover;
+        background-position: center;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .login-container {
+        width: 85%;
+        max-width: 350px;
+        margin: 0 auto;
+        padding: 25px 20px;
+        box-sizing: border-box;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        border: 1px solid #ddd;
+        position: relative; /* Added to properly position the logo */
+    }
+    
+    .login-container h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #000;
+    }
+    
+    .login-container input[type="text"],
+    .login-container input[type="password"] {
+        width: 100%;
+        padding: 12px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin: 8px 0;
+    }
+    
+    .login-container button {
+        width: 90%;
+        padding: 12px;
+        font-size: 16px;
+        margin-top: 15px;
+        background-color: blue;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    .password-container {
+        width: 100%;
+        position: relative;
+        margin: 8px 0;
+    }
+    
+    .password-container input {
+        width: 100%;
+        padding-right: 40px;
+    }
+    
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    
+    .remember-forgot {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin: 15px 0;
+        font-size: 14px;
+        flex-direction: row;
+        align-items: center;
+        text-align: left;
+    }
+    
+    .remember-forgot a {
+        color: blue;
+        text-decoration: none;
+    }
+    
+    .logo {
+        width: 55px;
+        height: auto;
+        position: absolute;
+        top: -17px; /* Changed from 5px to -25px to position at the top */
+        left: 0;
+        right: 0;
+        margin: 0 auto; /* Center horizontally */
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        width: 90%;
+        padding: 20px 15px;
+    }
+    
+    .login-container h2 {
+        font-size: 22px;
+    }
+    
+    .login-container input[type="text"],
+    .login-container input[type="password"] {
+        padding: 10px;
+        font-size: 13px;
+    }
+    
+    .login-container button {
+        padding: 10px;
+        font-size: 15px;
+    }
+    
+    .remember-forgot {
+        font-size: 13px;
+    }
+    
+    .logo {
+        width: 50px;
+        top: -17px; /* Changed from 5px to -25px to position at the top */
+        left: 0;
+        right: 0;
+        margin: 0 auto; /* Center horizontally */
+    }
+}
+
+/* Feedback button styling */
+.feedback-btn {
+    padding: 8px 12px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    width: auto;
+    margin: 0 auto;
+    display: block;
+    white-space: nowrap;
+}
+
+.feedback-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Media Queries for Mobile */
+@media screen and (max-width: 768px) {
+    .login-container input,
+    .login-container select,
+    select,
+    input[type="email"] {
+        width: 100% !important;
+        max-width: none !important;
+        box-sizing: border-box;
+        margin: 10px 0;
+    }
+
+    .form-section input,
+    .form-section select {
+        width: 100% !important;
+        max-width: none !important;
+        box-sizing: border-box;
+        margin: 10px 0;
+    }
+    
+    /* Logo below logout for mobile */
+    .Logout {
+        position: relative;
+        padding-bottom: 40px; /* Space for the logo */
+    }
+    
+    .Logout::after {
+        content: '';
+        display: block;
+        width: 65px;
+        height: 65px;
+        background-image: url('logo.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        position: absolute;
+        bottom: -375px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+.sit-in-btn {
+    padding: 8px 12px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    width: auto;
+    margin: 0 auto;
+    display: block;
+    white-space: nowrap;
+}
+
+.sit-in-btn:hover {
+    background-color: #0056b3;
+}
+
+.add-points-btn {
+    padding: 8px 12px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    width: auto;
+    margin: 5px auto 0;
+    display: block;
+    white-space: nowrap;
+}
+
+.add-points-btn:hover {
+    background-color: blue;
+}

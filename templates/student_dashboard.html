@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <div class="dashboard-wrapper">
+        <!-- Lab Rules & Regulations (Left) -->
+        <div class="lab-rules">
+            <h3>Sit-in, Lab Rules & Regulations</h3>
+            <div class="lab-rules-content">
+                <ul>
+                    <li>Maintain silence, proper decorum, and discipline inside the laboratory. Mobile phones and personal equipment must be switched off.</li>
+                    <li>Games, including computer-related and card games, are not allowed inside the lab.</li>
+                    <li>Surfing the Internet is only allowed with instructor permission. Downloading and installing software are strictly prohibited.</li>
+                    <li>Accessing websites unrelated to the course (especially illicit or pornographic sites) is strictly prohibited.</li>
+                    <li>Deleting files and changing computer settings is a major offense.</li>
+                    <li>Observe computer time usage carefully. A 15-minute allowance is given for each use; otherwise, the unit will be given to those who wish to "sit-in."</li>
+                    <li>Proper decorum must be observed inside the lab:
+                        <ul>
+                            <li>Do not enter the lab unless the instructor is present.</li>
+                            <li>All bags and personal belongings must be deposited at the counter.</li>
+                            <li>Follow the seating arrangement set by the instructor.</li>
+                            <li>Close all software programs at the end of class.</li>
+                            <li>Return all chairs to their proper places after use.</li>
+                        </ul>
+                    </li>
+                    <li>Chewing gum, eating, drinking, smoking, and vandalism are prohibited.</li>
+                    <li>Disturbances will result in removal from the lab. Public displays of physical intimacy are not tolerated.</li>
+                    <li>Hostile or threatening behavior (yelling, swearing, or ignoring lab personnel) will result in removal from the lab.</li>
+                    <li>For serious offenses, the Civil Security Office (CSU) may be called for assistance.</li>
+                    <li>Any technical problems must be reported to the lab supervisor, student assistant, or instructor.</li>
+                </ul>
+    
+                <h4>Disciplinary Action</h4>
+                <ul>
+                    <li><strong>First Offense:</strong> The Head, Dean, or OIC may recommend suspension from classes via the Guidance Center.</li>
+                    <li><strong>Second and Subsequent Offenses:</strong> A heavier sanction will be recommended to the Guidance Center.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Student Dashboard (Center) -->
+        <div class="dashboard-container">
+            <p>Welcome, {{ user.firstname }} {{ user.lastname }}!</p>
+            
+            {% if user %}
+            <div class="student-info">
+                <p><strong>ID:</strong> {{ user.student_id }}</p>
+                <p><strong>LAST NAME:</strong> {{ user.lastname }}</p>
+                <p><strong>FIRST NAME:</strong> {{ user.firstname }}</p>
+                <p><strong>COURSE:</strong> {{ user.course }}</p>
+                <p><strong>YEAR LEVEL:</strong> {{ user.yearlevel }}</p>
+                <p><strong>REMAINING SESSION:</strong> {{ remaining_sessions }}</p>
+                <div class="profile-pic">
+                    <img src="{{ profile_pic }}" alt="Profile Picture" class="student-profile">
+                </div>                
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Announcements (Right) -->
+        <div class="announcements">
+            <h3>Announcements</h3>
+            <div class="announcements-content" id="announcementsContent">
+                <!-- Announcements will be dynamically inserted here -->
+            </div>
+        </div>        
+    </div>
+
+    <script>
+        function fetchAnnouncements() {
+            fetch('/get_announcements')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Announcements data received:", data);  // Log the data to the console
+                    const announcementsContent = document.getElementById('announcementsContent');
+                    announcementsContent.innerHTML = '';  // Clear existing content
+
+                    if (data.length === 0) {
+                        announcementsContent.innerHTML = '<p>No announcements available.</p>';
+                        return;
+                    }
+
+                    data.forEach(ann => {
+                        const announcementDiv = document.createElement('div');
+                        announcementDiv.className = 'announcement';
+                        announcementDiv.innerHTML = `
+                            <p>${ann.text}</p>
+                            <small>Posted on: ${new Date(ann.created_at).toLocaleString()}</small>
+                        `;
+                        announcementsContent.appendChild(announcementDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching announcements:', error);
+                    const announcementsContent = document.getElementById('announcementsContent');
+                    announcementsContent.innerHTML = '<p>Failed to load announcements. Please try again later.</p>';
+                });
+        }
+
+        // Fetch announcements on page load
+        document.addEventListener('DOMContentLoaded', fetchAnnouncements);
+
+        // Optionally, refresh announcements every 5 minutes
+        setInterval(fetchAnnouncements, 300000);
+    </script>
+</body>
+</html>

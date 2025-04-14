@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <center><img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo"></center>
+
+        <!-- Login Form -->
+        <div id="login" class="form-section active">
+            <h2>CCS Sit-in Monitoring System</h2>
+            <form action="/login" method="POST">
+                <input type="text" name="username" placeholder="Student ID" required>
+                <div class="password-container">
+                    <input type="password" id="login-password" name="password" placeholder="Password" required>
+                    <div class="toggle-password" id="toggle-login-password" onclick="togglePassword('login-password', 'toggle-login-password')"></div>
+                </div> 
+				<div class="remember-forgot">
+                    <label for="remember-me">
+                        Remember Me</a>
+                        <a><input type="checkbox" id="remember-me" name="remember_me">
+                    </label>
+                    <a href="{{ url_for('forgot_password') }}">Forgot Password?</a>
+                </div> 
+                <button type="submit">Login</button>
+
+                <div class="tabs">
+                    <p>You Don't have an Account? <a href="javascript:void(0);" onclick="showForm('register')">Register</a></p>
+                </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="{{ 'error-message' if category == 'error' else 'success-message' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </form>
+        </div>
+
+        <!-- Registration Form -->
+        <div id="register" class="form-section">
+            <h2>Register</h2>
+            <form action="/register" method="POST" onsubmit="return validatePassword()">
+                <input type="text" name="id" placeholder="ID" required>
+                <input type="text" name="lastname" placeholder="Last Name" required>
+                <input type="text" name="firstname" placeholder="First Name" required>
+                <input type="text" name="middlename" placeholder="Middle Name">
+                
+                <!-- Course Selection -->
+                <select name="course" required>
+                    <option value="" disabled selected>Select Course</option>
+                    <option value="BSIT">BS Information Technology</option>
+                    <option value="BSCS">BS Computer Science</option>
+                    <option value="BSCJ">BS Criminology Justice</option>
+                    <option value="BSHM">BS Hospitality Management</option>
+                    <option value="BSCE">BS Civil Engineering</option>
+                    <option value="BSEE">BS Electrical Engineering</option>
+                </select>
+
+                <!-- Year Level Selection -->
+                <select name="yearlevel" required>
+                    <option value="" disabled selected>Select Year Level</option>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                    <option value="5th Year">5th Year</option>
+                </select>
+                
+                <input type="email" name="email" placeholder="Email" required>
+                
+                <!-- Password Fields with Toggle -->
+                <div class="password-container">
+                    <input type="password" id="register-password" name="password" placeholder="Password" required>
+                    <div class="toggle-password" id="toggle-register-password" onclick="togglePassword('register-password', 'toggle-register-password')"></div>
+                </div>
+                
+                <div class="password-container">
+                    <input type="password" id="repeat-password" name="repeat_password" placeholder="Repeat Password" required>
+                    <div class="toggle-password" id="toggle-repeat-password" onclick="togglePassword('repeat-password', 'toggle-repeat-password')"></div>
+                </div>                          
+
+                <button type="submit">Register</button>
+
+                    <button type="button" onclick="showForm('login')" class="back-button">Back to Login</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showForm(formId) {
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(formId).classList.add('active');
+        }
+
+        function togglePassword(inputId, toggleId) {
+            let input = document.getElementById(inputId);
+            let toggle = document.getElementById(toggleId);
+
+            if (input.type === "password") {
+                input.type = "text";
+                toggle.classList.add("closed");
+            } else {
+                input.type = "password";
+                toggle.classList.remove("closed");
+            }
+        }
+
+        function validatePassword() {
+            let password = document.getElementById("register-password").value;
+            let repeatPassword = document.getElementById("repeat-password").value;
+
+            if (password !== repeatPassword) {
+                alert("Passwords do not match!");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

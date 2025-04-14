@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make a Reservation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function fetchAvailablePCs() {
+            const labId = document.getElementById("lab").value;
+            if (!labId) {
+                document.getElementById("available_pc").innerHTML = "<option value=''>Select a lab first</option>";
+                return;
+            }
+
+            fetch(`/get_available_pcs?lab_id=${labId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const pcDropdown = document.getElementById("available_pc");
+                    pcDropdown.innerHTML = "<option value=''>Select a PC</option>";
+                    data.forEach(pc => {
+                        const option = document.createElement("option");
+                        option.value = pc.pc_name;
+                        option.textContent = pc.pc_name;
+                        pcDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error fetching PCs:", error));
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("lab").addEventListener("change", fetchAvailablePCs);
+        });
+    </script>
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class="reservation-container">
+        <center><h2>Make a Reservation</h2></center>
+        <form method="POST" action="/make_reservation">
+            <div class="form-group">
+                <label for="student_id">ID:</label>
+                <input type="text" id="id" name="student_id" value="{{ user.student_id }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="student_name">Student Name:</label>
+                <input type="text" id="student_name" name="student_name" value="{{ user.firstname }} {{ user.lastname }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="purpose">Purpose:</label>
+                <select id="purpose" name="purpose" required>
+                    <option value="">Select a programming language</option>
+                    <option value="C#">C#</option>
+                    <option value="Java">Java</option>
+                    <option value="C">C</option>
+                    <option value="C++">C++</option>
+                    <option value="JavaScript">JavaScript</option>
+                    <option value="PHP">PHP</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="lab">Laboratory:</label>
+                <select id="lab" name="lab" required>
+                    <option value="">Select a laboratory</option>
+                    {% for lab in labs %}
+                        <option value="{{ lab.id }}">{{ lab.lab_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="available_pc">PC to Use:</label>
+                <select id="available_pc" name="available_pc" required>
+                    <option value="">Select a PC</option>
+                    <!-- Options will be loaded by JavaScript -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="remaining_session">Remaining Session:</label>
+                <input type="text" id="remaining_session" name="remaining_session" value="{{ remaining_sessions }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="time">Time:</label>
+                <input type="time" id="time" name="time" required>
+            </div>
+
+            <button type="submit">Reserve</button>
+        </form>
+    </div>
+</body>
+</html>

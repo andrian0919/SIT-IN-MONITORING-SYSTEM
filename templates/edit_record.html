@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Record</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <style>
+    .dropdown {
+    width: 57%; /* Adjust width to fit container */
+    max-width: 400px; /* Set maximum width */
+    padding: 9px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+}
+.form-group {
+    margin-bottom: 20px; /* Adds space between the two selections */
+}
+    </style>
+    {% include 'header.html' %}
+    <div class="container">
+        <center><h2>Student Information</h2></center>
+        <form action="{{ url_for('edit_record') }}" method="POST">
+            <div class="form-group">
+                <label for="student_id">ID:</label>
+                <input type="text" name="student_id" value="{{ user.student_id }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="lastname">LASTNAME:</label>
+                <input type="text" name="lastname" value="{{ user.lastname }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="firstname">FIRSTNAME:</label>
+                <input type="text" name="firstname" value="{{ user.firstname }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="course">COURSE:</label>
+                <select name="course" id="course" class="dropdown" required>
+                    <option value="" disabled>Select Course</option>
+                    <option value="BSIT" {% if user.course == "BSIT" %}selected{% endif %}>BS Information Technology</option>
+                    <option value="BSCS" {% if user.course == "BSCS" %}selected{% endif %}>BS Computer Science</option>
+                    <option value="BSCJ" {% if user.course == "BSCJ" %}selected{% endif %}>BS Criminology Justice</option>
+                    <option value="BSHM" {% if user.course == "BSHM" %}selected{% endif %}>BS Hospitality Management</option>
+                    <option value="BSCE" {% if user.course == "BSCE" %}selected{% endif %}>BS Civil Engineering</option>
+                    <option value="BSEE" {% if user.course == "BSEE" %}selected{% endif %}>BS Electrical Engineering</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="yearlevel">YEAR LEVEL:</label>
+                <select name="yearlevel" id="yearlevel" class="dropdown" required>
+                    <option value="" disabled>Select Year Level</option>
+                    <option value="1st Year" {% if user.yearlevel == "1st Year" %}selected{% endif %}>1st Year</option>
+                    <option value="2nd Year" {% if user.yearlevel == "2nd Year" %}selected{% endif %}>2nd Year</option>
+                    <option value="3rd Year" {% if user.yearlevel == "3rd Year" %}selected{% endif %}>3rd Year</option>
+                    <option value="4th Year" {% if user.yearlevel == "4th Year" %}selected{% endif %}>4th Year</option>
+                    <option value="5th Year" {% if user.yearlevel == "5th Year" %}selected{% endif %}>5th Year</option>
+                </select>
+            </div>
+
+            <button type="submit">Update</button>
+        </form>
+    </div>
+</body>
+</html>

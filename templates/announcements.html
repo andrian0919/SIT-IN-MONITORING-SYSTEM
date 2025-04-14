@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Announcements</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .logo {
+            display: flex;
+            align-items: center;
+            position: relative;
+            right: 12%;
+            left: 16%;
+            gap: 15px; /* Adjust space between logos */
+        }
+        .admin-home {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 28.6%;
+            }
+        .reservation-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 11.9%;
+        }
+
+        .sit-in-reports-header {
+            text-decoration: none;
+            color: white;
+            background-color: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 30.6%;
+        }
+
+        .feedback-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 11.4%;
+        }
+
+        .announcement-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 5.7%;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>ANNOUNCEMENTS</h1>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="main-logo">
+            <img src="{{ url_for('static', filename='UC_logo.png') }}" alt="Logo" class="uc-logo">
+            <img src="{{ url_for('static', filename='PSITS_LOGO.png') }}" alt="Logo" class="psits-logo">
+        </div>
+        <a href="/admin_dashboard" class="admin-home">Home</a>
+        <a href="/sit_in_reports" class="sit-in-reports-header">Reports</a>
+        <a href="/Reservation_Actions" class="reservation-header">Reservations</a>
+        <a href="/feedback" class="feedback-header">Feedbacks</a>
+        <a href="/announcements" class="announcement-header">Announcements</a>
+        <a href="/logout" class="admin-logout">Logout</a>
+    </div>
+
+    <div class="announcements-container">
+        <div class="announcement-form">
+            <center><h3>Post Announcement</h3></center>
+            <form id="announcementForm">
+                <textarea id="announcementText" placeholder="Enter announcement text..." required></textarea>
+                <button type="submit">Post Announcement</button>
+            </form>
+        </div>
+
+        <div class="announcements-list">
+            <center><h3>Existing Announcements</h3></center>
+            <div class="table-container">
+                <table id="announcementsTable">
+                    <thead>
+                        <tr>
+                            <th>Announcement</th>
+                            <th>Posted On</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="announcementsContent">
+                        <!-- Announcements will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>        
+    </div>
+    <div class="edit-announcement-container" id="editContainer">
+        <h3>Edit Announcement</h3>
+        <form id="editAnnouncementForm">
+            <textarea id="editAnnouncementText" placeholder="Edit announcement text..." required></textarea>
+            <button type="submit">Save Changes</button>
+            <button type="button" onclick="closeEditContainer()">Cancel</button>
+        </form>
+    </div>    
+<script>
+    let currentEditId = null; // Track the ID of the announcement being edited
+
+    function openEditContainer(id, text) {
+    console.log("Editing Announcement ID:", id, "Text:", text); // Debugging
+
+    const editContainer = document.getElementById('editContainer');
+    const editTextarea = document.getElementById('editAnnouncementText');
+
+    if (!editContainer || !editTextarea) {
+        console.error("Edit container or textarea not found!");
+        return;
+    }
+
+    editTextarea.value = text;
+    currentEditId = id;
+    editContainer.style.display = 'flex'; // Ensure it's visible
+}
+
+
+    function closeEditContainer() {
+        const editContainer = document.getElementById('editContainer');
+        editContainer.style.display = 'none'; // Hide the edit container
+        currentEditId = null; // Reset the edit ID
+    }
+
+    document.getElementById('editAnnouncementForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const newText = document.getElementById('editAnnouncementText').value;
+
+        if (!currentEditId || !newText) {
+            alert('Invalid input');
+            return;
+        }
+
+        fetch(`/edit_announcement/${currentEditId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text: newText }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Announcement updated successfully');
+                closeEditContainer(); // Close the edit container
+                fetchAnnouncements(); // Refresh the announcements list
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating announcement:', error);
+        });
+    });
+
+    document.getElementById('announcementForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const announcementText = document.getElementById('announcementText').value;
+
+        fetch('/admin/post_announcement', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `announcement_text=${encodeURIComponent(announcementText)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Announcement posted successfully');
+                document.getElementById('announcementText').value = '';
+                fetchAnnouncements(); // Refresh the announcements list
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Network error. Please try again.');
+        });
+    });
+
+    function fetchAnnouncements() {
+        fetch('/get_announcements')
+            .then(response => response.json())
+            .then(data => {
+                const announcementsContent = document.getElementById('announcementsContent');
+                announcementsContent.innerHTML = ''; // Clear existing content
+
+                data.forEach(ann => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${ann.text}</td>
+                        <td>${new Date(ann.created_at).toLocaleString()}</td>
+                        <td>
+                            <div class="actions">
+                                <button class="edit" onclick="openEditContainer(${ann.id}, \`${ann.text}\`)">Edit</button>
+                                <button class="delete" onclick="deleteAnnouncement(${ann.id})">Delete</button>
+                            </div>
+                        </td>
+                    `;
+                    announcementsContent.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching announcements:', error);
+            });
+    }
+
+    function deleteAnnouncement(id) {
+        if (confirm("Are you sure you want to delete this announcement?")) {
+            fetch(`/delete_announcement/${id}`, {
+                method: 'DELETE',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Announcement deleted successfully');
+                    fetchAnnouncements(); // Refresh the list
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting announcement:', error);
+            });
+        }
+    }
+
+    // Fetch announcements on page load
+    document.addEventListener('DOMContentLoaded', fetchAnnouncements);
+</script>
+</body>
+</html>

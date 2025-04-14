@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reports</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .logo {
+            display: flex;
+            align-items: center;
+            position: relative;
+            right: 0%;
+            left: 10%;
+            gap: 15px;
+            position: absolute;
+            left: 603px;
+        }
+        
+        .admin-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 0 20px;
+        }
+        
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            position: relative;
+            margin-bottom: 0;
+            width: 250px;
+        }
+        
+        .report-header {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 24px;
+            color: white;
+            position: relative;
+            left: 20%;
+        }
+        
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid black;
+        }
+        
+        th {
+            background-color: #444;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            gap: 20px;
+        }
+        
+        .pagination button {
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        
+        .pagination button:hover {
+            background-color: #0056b3;
+        }
+        
+        .pagination button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .pagination span {
+            font-weight: bold;
+            font-size: 16px;
+            background-color: #f0f0f0;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .filter-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 20px;
+            justify-content: space-between;
+        }
+        
+        .filter-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .filter-container select, 
+        .filter-container input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .filter-container select#labFilter {
+            width: 120px; /* Minimized width */
+        }
+        
+        .export-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .export-controls select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: white;
+            width: 100px;
+        }
+        
+        .export-btn {
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+        
+        .export-btn:hover {
+            background-color: #0056b3;
+        }
+        .admin-home {
+        text-decoration: none;
+        color: white;
+        background-color: blue;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: medium;
+        position: relative;
+        left: 33.8%;
+        }
+        .reservation-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 15.05%;
+        }
+
+        .sit-in-reports-header {
+            text-decoration: none;
+            color: white;
+            background-color: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 34.8%;
+        }
+
+        .feedback-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 13.5%;
+        }
+
+        .announcement-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 6.7%;
+        }
+
+        /* New styling for filter types */
+        .filter-type {
+            display: flex;
+            gap: 15px;
+            margin-right: 15px;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .filter-type label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .filter-btn {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .filter-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>SIT-IN RECORDS REPORT</h1>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="main-logo">
+            <img src="{{ url_for('static', filename='UC_logo.png') }}" alt="Logo" class="uc-logo">
+            <img src="{{ url_for('static', filename='PSITS_LOGO.png') }}" alt="Logo" class="psits-logo">
+        </div>
+        <a href="/admin_dashboard" class="admin-home">Home</a>
+        <a href="/sit_in_reports" class="sit-in-reports-header">Reports</a>
+        <a href="/Reservation_Actions" class="reservation-header">Reservations</a>
+        <a href="/feedback" class="feedback-header">Feedbacks</a>
+        <a href="/announcements" class="announcement-header">Announcements</a>
+        <a href="/logout" class="admin-logout">Logout</a>
+    </div>
+
+    <div class="admin-container">
+        <h2 class="report-header">Sit-in Records History</h2>
+        
+        <div class="filter-controls">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search by Student ID" onkeyup="searchTable()">
+                <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 50 50"
+                    style="fill:#1A1A1A;">
+                    <path d="M 21 3 C 11.601563 3 4 10.601563 4 20 C 4 29.398438 11.601563 37 21 37 C 24.355469 37 27.460938 36.015625 30.09375 34.34375 L 42.375 46.625 L 46.625 42.375 L 34.5 30.28125 C 36.679688 27.421875 38 23.878906 38 20 C 38 10.601563 30.398438 3 21 3 Z M 21 7 C 28.199219 7 34 12.800781 34 20 C 34 27.199219 28.199219 33 21 33 C 13.800781 33 8 27.199219 8 20 C 8 12.800781 13.800781 7 21 7 Z"></path>
+                </svg></span>               
+            </div>
+            
+            <div class="filter-container">
+                <div class="filter-type">
+                    <label><input type="radio" name="filterType" value="all" {% if filter_type == 'all' %}checked{% endif %} onchange="updateFilterControls()"> All</label>
+                    <label><input type="radio" name="filterType" value="lab" {% if filter_type == 'lab' %}checked{% endif %} onchange="updateFilterControls()"> Per Lab</label>
+                    <label><input type="radio" name="filterType" value="purpose" {% if filter_type == 'purpose' %}checked{% endif %} onchange="updateFilterControls()"> Per Purpose</label>
+                </div>
+                
+                <input type="date" id="dateFilter" placeholder="Filter by date" onchange="applyFilters()">
+                
+                <select id="labFilter" {% if filter_type != 'lab' %}style="display:none"{% endif %} onchange="applyServerFilters()">
+                    <option value="">Select Lab</option>
+                    {% for lab in labs %}
+                    <option value="{{ lab }}" {% if lab == selected_lab %}selected{% endif %}>{{ lab }}</option>
+                    {% endfor %}
+                </select>
+                
+                <select id="purposeFilter" {% if filter_type != 'purpose' %}style="display:none"{% endif %} onchange="applyServerFilters()">
+                    <option value="">Select Purpose</option>
+                    {% for purpose in purposes %}
+                    <option value="{{ purpose }}" {% if purpose == selected_purpose %}selected{% endif %}>{{ purpose }}</option>
+                    {% endfor %}
+                </select>
+                
+                <div class="export-controls">
+                    <select id="exportFormat">
+                        <option value="excel">Excel</option>
+                        <option value="csv">CSV</option>
+                        <option value="pdf">PDF</option>
+                    </select>
+                    <button class="export-btn" onclick="exportReport()">Export Report</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table id="sitInReportsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Full Name</th>
+                        <th>Purpose</th>
+                        <th>Lab</th>
+                        <th>Time-in</th>
+                        <th>Time-out</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in sit_in_records %}
+                    <tr>
+                        <td>{{ record.student_id }}</td>
+                        <td>{{ record.firstname }} {{ record.lastname }}</td>
+                        <td>{{ record.purpose }}</td>
+                        <td>{{ record.lab }}</td>
+                        <td>{{ record.time_in }}</td>
+                        <td>{{ record.time_out }}</td>
+                        <td>{{ record.date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            <button id="prevPageBtn">Previous</button>
+            <span id="sitInReportsPageNumber">1</span>
+            <button id="nextPageBtn">Next</button>
+        </div>
+    </div>
+
+    <script>
+        // Pagination setup
+        const paginationState = {
+            'sitInReportsTable': { currentPage: 1 }
+        };
+        
+        const rowsPerPage = 10; // More rows per page for reports
+        
+        function paginateTable(tableId) {
+            let table = document.getElementById(tableId);
+            if (!table) {
+                console.error(`Table with ID ${tableId} not found`);
+                return;
+            }
+            
+            let tbody = table.getElementsByTagName("tbody")[0];
+            if (!tbody) {
+                console.error(`Tbody not found in table ${tableId}`);
+                return;
+            }
+            
+            let rows = tbody.getElementsByTagName("tr");
+            console.log(`Total rows in table: ${rows.length}`);
+            
+            // If filter type is "all" with no client-side filtering, all rows should be considered
+            const filterType = document.querySelector('input[name="filterType"]:checked')?.value || 'all';
+            const isServerSideFilterOnly = filterType === 'all' && !isFiltering();
+            
+            console.log(`Filter type: ${filterType}, Server-side only: ${isServerSideFilterOnly}`);
+            
+            // Get visible rows (those not hidden by client-side filtering)
+            let visibleRows = [];
+            for (let i = 0; i < rows.length; i++) {
+                if (isServerSideFilterOnly || rows[i].style.display !== 'none') {
+                    visibleRows.push(rows[i]);
+                }
+            }
+            
+            let totalRows = visibleRows.length;
+            let totalPages = Math.ceil(totalRows / rowsPerPage);
+            
+            console.log(`Visible rows: ${totalRows}, Total pages: ${totalPages}`);
+            
+            let currentPage = paginationState[tableId].currentPage;
+            console.log(`Current page before adjustment: ${currentPage}`);
+            
+            // Ensure current page is valid
+            if (currentPage > totalPages && totalPages > 0) {
+                currentPage = totalPages;
+                paginationState[tableId].currentPage = currentPage;
+                console.log(`Adjusted current page to: ${currentPage}`);
+            }
+            
+            if (totalPages === 0) {
+                currentPage = 1;
+                paginationState[tableId].currentPage = 1;
+                console.log("No pages available, setting to page 1");
+            }
+            
+            // Update the page number display
+            const pageNumberElem = document.getElementById("sitInReportsPageNumber");
+            if (pageNumberElem) {
+                pageNumberElem.innerText = currentPage;
+            }
+            
+            // Important: Hide all rows first
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].style.display = "none";
+            }
+            
+            // Show only rows for current page
+            let startIdx = (currentPage - 1) * rowsPerPage;
+            let endIdx = Math.min(startIdx + rowsPerPage, totalRows);
+            
+            console.log(`Showing rows from index ${startIdx} to ${endIdx-1}`);
+            
+            for (let i = 0; i < visibleRows.length; i++) {
+                if (i >= startIdx && i < endIdx) {
+                visibleRows[i].style.display = "";
+                    console.log(`Showing row ${i}`);
+                }
+            }
+            
+            // Update button states
+            const prevButton = document.querySelector('.pagination button:first-child');
+            const nextButton = document.querySelector('.pagination button:last-child');
+            
+            if (prevButton) {
+            prevButton.disabled = currentPage === 1;
+            }
+            
+            if (nextButton) {
+            nextButton.disabled = currentPage === totalPages || totalRows === 0;
+                console.log(`Next button disabled: ${currentPage === totalPages || totalRows === 0}`);
+            }
+            
+            console.log(`Pagination complete: Page ${currentPage}/${totalPages}, Rows ${totalRows}, Visible ${endIdx-startIdx}`);
+        }
+        
+        function nextPage(tableId) {
+            let table = document.getElementById(tableId);
+            if (!table) return;
+            
+            let tbody = table.getElementsByTagName("tbody")[0];
+            let rows = tbody.getElementsByTagName("tr");
+            
+            // Use the same logic as in paginateTable to determine visible rows
+            const filterType = document.querySelector('input[name="filterType"]:checked').value;
+            const isServerSideFilterOnly = filterType === 'all' && !isFiltering();
+            
+            // Get visible rows
+            let visibleRows = [];
+            for (let i = 0; i < rows.length; i++) {
+                if (isServerSideFilterOnly || rows[i].style.display !== 'none') {
+                    visibleRows.push(rows[i]);
+                }
+            }
+            
+            let totalRows = visibleRows.length;
+            let totalPages = Math.ceil(totalRows / rowsPerPage);
+            
+            if (paginationState[tableId].currentPage < totalPages) {
+                paginationState[tableId].currentPage++;
+                paginateTable(tableId);
+            }
+        }
+        
+        function prevPage(tableId) {
+            let table = document.getElementById(tableId);
+            if (!table) return;
+            
+            if (paginationState[tableId].currentPage > 1) {
+                paginationState[tableId].currentPage--;
+                paginateTable(tableId);
+            }
+        }
+        
+        // Function to update filter controls based on selected filter type
+        function updateFilterControls() {
+            const filterType = document.querySelector('input[name="filterType"]:checked').value;
+            
+            // Hide all filter dropdowns
+            document.getElementById('labFilter').style.display = 'none';
+            document.getElementById('purposeFilter').style.display = 'none';
+            
+            // Show the appropriate filter dropdown
+            if (filterType === 'lab') {
+                document.getElementById('labFilter').style.display = '';
+            } else if (filterType === 'purpose') {
+                document.getElementById('purposeFilter').style.display = '';
+            }
+            
+            // Auto-apply the filter when changing filter type (excluding initial load)
+            if (filterType === 'all') {
+                applyServerFilters();
+            }
+        }
+        
+        // Function to apply filters via server-side (page reload)
+        function applyServerFilters() {
+            const filterType = document.querySelector('input[name="filterType"]:checked').value;
+            let url = '/sit_in_reports?filter_type=' + filterType;
+            
+            if (filterType === 'lab') {
+                const labValue = document.getElementById('labFilter').value;
+                if (labValue) {
+                    url += '&lab=' + encodeURIComponent(labValue);
+                }
+            } else if (filterType === 'purpose') {
+                const purposeValue = document.getElementById('purposeFilter').value;
+                if (purposeValue) {
+                    url += '&purpose=' + encodeURIComponent(purposeValue);
+                }
+            }
+            
+            window.location.href = url;
+        }
+        
+        // Function to get currently filtered table data
+        function getFilteredTableData() {
+            const table = document.getElementById('sitInReportsTable');
+            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+            
+            // Get ALL filtered rows, not just the visible ones on the current page
+            const allRows = Array.from(table.querySelectorAll('tbody tr'));
+            const filteredRows = allRows.filter(
+                row => row.style.display !== 'none' || !isFiltering() 
+            );
+            
+            const data = filteredRows.map(row => {
+                const cells = Array.from(row.querySelectorAll('td'));
+                const rowData = {};
+                
+                headers.forEach((header, index) => {
+                    rowData[header] = cells[index].textContent.trim();
+                });
+                
+                return rowData;
+            });
+            
+            return {
+                headers: headers,
+                rows: data
+            };
+        }
+        
+        // Helper function to determine if we're applying client-side filtering
+        function isFiltering() {
+            const dateValue = document.getElementById("dateFilter").value;
+            const searchValue = document.getElementById("searchInput").value;
+            return dateValue !== '' || searchValue !== '';
+        }
+        
+        // Apply all filters and search
+        function applyFilters() {
+            // Reset to first page
+            paginationState['sitInReportsTable'].currentPage = 1;
+            
+            // Get filter values
+            const dateFilterInput = document.getElementById("dateFilter");
+            const dateValue = dateFilterInput.value;
+            const searchValue = document.getElementById("searchInput").value.toLowerCase();
+            
+            const table = document.getElementById("sitInReportsTable");
+            const rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+            
+            let rowsVisible = 0;
+            
+            // Apply all filters to each row
+            for (let i = 0; i < rows.length; i++) {
+                let showRow = true;
+                
+                // Student ID (column 0) and Full Name (column 1) for search
+                const idCell = rows[i].getElementsByTagName("td")[0];
+                const nameCell = rows[i].getElementsByTagName("td")[1];
+                const idText = idCell ? idCell.textContent.toLowerCase() : "";
+                const nameText = nameCell ? nameCell.textContent.toLowerCase() : "";
+                
+                // Date cell (column 6)
+                const dateCell = rows[i].getElementsByTagName("td")[6];
+                const dateText = dateCell ? dateCell.textContent.trim() : "";
+                
+                // Apply date filter if set
+                if (dateValue) {
+                    // Convert the date input (YYYY-MM-DD) to match the date display format
+                    const filterDate = new Date(dateValue);
+                    const filterYear = filterDate.getFullYear();
+                    const filterMonth = String(filterDate.getMonth() + 1).padStart(2, '0');
+                    const filterDay = String(filterDate.getDate()).padStart(2, '0');
+                    const formattedFilterDate = `${filterYear}-${filterMonth}-${filterDay}`;
+                    
+                    // Check if the date in the table contains the formatted filter date
+                    if (!dateText.includes(formattedFilterDate)) {
+                        showRow = false;
+                    }
+                }
+                
+                // Apply search filter if set
+                if (searchValue && !(idText.includes(searchValue) || nameText.includes(searchValue))) {
+                    showRow = false;
+                }
+                
+                // Show or hide the row based on filter results
+                rows[i].style.display = showRow ? "" : "none";
+                
+                if (showRow) {
+                    rowsVisible++;
+                }
+            }
+            
+            // Update pagination after filtering
+            paginateTable('sitInReportsTable');
+        }
+        
+        // Search function
+        function searchTable() {
+            applyFilters();
+        }
+        
+        // Initialize event listeners
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("DOM loaded, initializing pagination...");
+            
+            // Make sure we have the table we need
+            const sitInTable = document.getElementById("sitInReportsTable");
+            if (!sitInTable) {
+                console.error("Could not find the sit-in reports table");
+                return;
+            }
+            
+            // Count total rows to ensure we have data
+            const rows = sitInTable.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+            console.log(`Found ${rows.length} total rows in the table`);
+            
+            // Make sure we have pagination elements
+            const pageNumberElem = document.getElementById("sitInReportsPageNumber");
+            if (!pageNumberElem) {
+                console.error("Could not find the page number element");
+            }
+            
+            // Reset pagination state
+            paginationState['sitInReportsTable'] = { currentPage: 1 };
+            
+            // Initialize pagination
+            paginateTable('sitInReportsTable');
+            
+            // Set up event listeners for filters
+            document.getElementById("dateFilter").addEventListener("change", applyFilters);
+            document.getElementById("searchInput").addEventListener("keyup", searchTable);
+            
+            // Explicitly add click listeners for pagination buttons
+            const prevButton = document.querySelector('.pagination button:first-child');
+            const nextButton = document.querySelector('.pagination button:last-child');
+            
+            if (prevButton && nextButton) {
+                prevButton.addEventListener('click', function() {
+                    prevPage('sitInReportsTable');
+                });
+                
+                nextButton.addEventListener('click', function() {
+                    nextPage('sitInReportsTable');
+                });
+            }
+        });
+        
+        // Export report function with format selection
+        function exportReport() {
+            const format = document.getElementById("exportFormat").value;
+            const filterType = document.querySelector('input[name="filterType"]:checked').value;
+            let filterValue = '';
+            
+            if (filterType === 'lab') {
+                filterValue = document.getElementById('labFilter').value;
+            } else if (filterType === 'purpose') {
+                filterValue = document.getElementById('purposeFilter').value;
+            }
+            
+            // For client-side filtered data
+            let filteredData = getFilteredTableData();
+            let queryParams = '';
+            
+            // When using the "All" filter and there's no client-side filtering,
+            // make sure we include a parameter to get all server-side data for export
+            if (filterType === 'all' && !isFiltering()) {
+                queryParams = '?export=all';
+            }
+            
+            // Send data to server for conversion to selected format
+            fetch('/export_report' + queryParams, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    format: format,
+                    data: filteredData,
+                    filter_type: filterType,
+                    filter_value: filterValue,
+                    get_all: filterType === 'all' && !isFiltering()
+                })
+            })
+            .then(response => {
+                if(format === 'csv' || format === 'excel') {
+                    return response.blob();
+                } else {
+                    return response.blob();
+                }
+            })
+            .then(blob => {
+                // Create a download link for the file
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                // Set appropriate filename based on filter
+                let filename = 'sit_in_report';
+                if (filterType === 'lab' && filterValue) {
+                    filename = `lab_${filterValue}_report`;
+                } else if (filterType === 'purpose' && filterValue) {
+                    filename = `purpose_${filterValue}_report`;
+                }
+                
+                a.download = `${filename}.${getFileExtension(format)}`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+            })
+            .catch(error => {
+                console.error('Export error:', error);
+                alert(`Error exporting to ${format.toUpperCase()}: ${error.message}`);
+            });
+        }
+        
+        // Helper function to get correct file extension
+        function getFileExtension(format) {
+            switch(format) {
+                case 'csv': return 'csv';
+                case 'excel': return 'xlsx';
+                case 'pdf': return 'pdf';
+                default: return 'xlsx';
+            }
+        }
+    </script>
+</body>
+</html> 

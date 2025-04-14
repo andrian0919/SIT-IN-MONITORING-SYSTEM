@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <div class="history_dashboard-container">
+        <h2>Student Sit-in History</h2>
+        <div class="table-wrapper">
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Last Name</th>
+                        <th>First Name</th>
+                        <th>Lab</th>
+                        <th>PC</th>
+                        <th>Purpose</th>
+                        <th>Remaining Sessions</th> <!-- New Column -->
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in reservations %}
+                    <tr>
+                        <td>{{ reservation.student_id }}</td>
+                        <td>{{ reservation.lastname }}</td>
+                        <td>{{ reservation.firstname }}</td>
+                        <td>{{ reservation.lab }}</td>
+                        <td>{{ reservation.available_pc }}</td>
+                        <td>{{ reservation.purpose }}</td>
+                        <td>{{ remaining_sessions.get(reservation.student_id, 0) }}</td> <!-- Display Remaining Sessions -->
+                        <td>{{ reservation.date }}</td>
+                        <td>{{ reservation.time }}</td>
+                        <td>{{ reservation.status }}</td>
+                        <td>
+                            <button onclick="showForm('Feedback', '{{ reservation.id }}', '{{ reservation.lab }}')" class="feedback-btn">Feedback</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>         
+            </table>
+        </div>
+        <div class="pagination">
+            <button onclick="prevPage('historyTable')" id="prevButton">Previous</button>
+            <span id="historyPageNumber">1</span>
+            <button onclick="nextPage('historyTable')" id="nextButton">Next</button>
+        </div>
+    </div>
+    <div class="feedback-form-container" id="feedbackForm" style="display:none;">
+        <form id="feedbackFormContent" onsubmit="submitFeedback(event)">
+            <input type="hidden" id="reservationId">
+            <input type="hidden" id="lab">
+            <textarea id="feedbackText" rows="4" cols="50" placeholder="Enter your feedback here..." required></textarea>
+            <button type="submit">Submit Feedback</button>
+            <button type="button" onclick="hideForm()">Cancel</button>
+        </form>
+    </div>
+<script>
+    // Pagination variables
+    const rowsPerPage = 5;
+    const paginationState = {
+        historyTable: {
+            currentPage: 1
+        }
+    };
+
+    // Initialize pagination on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        paginateTable('historyTable');
+    });
+
+    function paginateTable(tableId) {
+        const table = document.getElementById(tableId);
+        if (!table) return;
+        
+        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+        const totalRows = rows.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        const currentPage = paginationState[tableId].currentPage;
+        
+        // Update page number display
+        document.getElementById('historyPageNumber').textContent = currentPage;
+        
+        // Show/hide rows based on current page
+        for (let i = 0; i < totalRows; i++) {
+            rows[i].style.display = (i >= (currentPage - 1) * rowsPerPage && i < currentPage * rowsPerPage) ? "" : "none";
+        }
+        
+        // Update button states
+        document.getElementById('prevButton').disabled = currentPage === 1;
+        document.getElementById('nextButton').disabled = currentPage === totalPages || totalRows === 0;
+    }
+
+    function nextPage(tableId) {
+        const table = document.getElementById(tableId);
+        if (!table) return;
+        
+        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+        const totalRows = rows.length;
+        
+        if (paginationState[tableId].currentPage * rowsPerPage < totalRows) {
+            paginationState[tableId].currentPage++;
+            paginateTable(tableId);
+        }
+    }
+
+    function prevPage(tableId) {
+        if (paginationState[tableId].currentPage > 1) {
+            paginationState[tableId].currentPage--;
+            paginateTable(tableId);
+        }
+    }
+
+    function showForm(formType, reservationId = null, lab = null) {
+        if (formType === 'Feedback') {
+            const feedbackForm = document.getElementById('feedbackForm');
+            const reservationIdInput = document.getElementById('reservationId');
+            const labInput = document.getElementById('lab');
+            
+            if (reservationId) {
+                reservationIdInput.value = reservationId;
+                labInput.value = lab;
+            } else {
+                reservationIdInput.value = '';
+                labInput.value = '';
+            }
+            
+            feedbackForm.style.display = 'block';
+        }
+    }
+
+    function hideForm() {
+        document.getElementById('feedbackForm').style.display = 'none';
+        document.getElementById('feedbackText').value = '';
+        document.getElementById('reservationId').value = '';
+        document.getElementById('lab').value = '';
+    }
+
+    function submitFeedback(event) {
+        event.preventDefault();
+        const feedbackText = document.getElementById('feedbackText').value;
+        const studentId = "{{ user.student_id }}";
+        const reservationId = document.getElementById('reservationId').value;
+
+        fetch('/submit_feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                student_id: studentId, 
+                feedback_text: feedbackText,
+                lab: document.getElementById('lab').value
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Feedback submitted successfully!');
+                hideForm();
+            } else {
+                alert('Error submitting feedback.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
+</body>
+</html>

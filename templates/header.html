@@ -1,0 +1,62 @@
+<div class="header-container">
+    <div class="header-left">
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle navigation menu">☰</button>
+        <div class="header-title">
+            <h1>STUDENT DASHBOARD</h1>
+        </div>
+    </div>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="main-logo">
+        <img src="{{ url_for('static', filename='UC_logo.png') }}" alt="UC Logo" class="uc-logo">
+        <img src="{{ url_for('static', filename='PSITS_LOGO.png') }}" alt="PSITS Logo" class="psits-logo">
+    </div>
+    <div class="nav-links" id="navLinks">
+        <a href="{{ url_for('student_dashboard') }}">Home</a>
+        <a href="{{ url_for('edit_record') }}">Profile</a>
+        <a href="{{ url_for('make_reservation') }}">Reservation</a>
+        <a href="{{ url_for('history') }}">History</a>
+        <a href="{{ url_for('logout') }}" class="Logout">Logout</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const navLinks = document.getElementById('navLinks');
+        
+        if (mobileMenuToggle && navLinks) {
+            // Ensure the menu toggle is working properly
+            mobileMenuToggle.addEventListener('click', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                // Toggle active class for animation
+                navLinks.classList.toggle('active');
+                console.log('Menu toggle clicked');
+                
+                // Add a slight delay before focusing on the first link (for accessibility)
+                if (navLinks.classList.contains('active')) {
+                    setTimeout(function() {
+                        const firstLink = navLinks.querySelector('a');
+                        if (firstLink) firstLink.focus();
+                    }, 300); // Match the transition duration
+                }
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!navLinks.contains(event.target) && event.target !== mobileMenuToggle) {
+                    navLinks.classList.remove('active');
+                }
+            });
+            
+            // Close menu when pressing Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                    mobileMenuToggle.focus();
+                }
+            });
+        }
+    });
+</script>

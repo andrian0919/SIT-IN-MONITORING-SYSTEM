@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .logo {
+            display: flex;
+            align-items: center;
+            position: relative;
+            right: 0%;
+            left: 15.4%;
+            gap: 15px; /* Adjust space between logos */
+        }
+        .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+        padding-top: 60px;
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #eee;
+        width: 50%;
+        max-width: 500px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        animation: modalFadeIn 0.3s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Form styling for vertical layout */
+    .modal-content form {
+        display: flex;
+        flex-direction: column; /* Stack form elements vertically */
+        gap: 10px; /* Space between form elements */
+    }
+
+    .modal-content label {
+        font-weight: bold;
+        margin-bottom: 5px; /* Space between label and input */
+    }
+
+    .modal-content input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 100%; /* Full width for inputs */
+    }
+
+    .modal-content select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 500px;
+    }
+
+    .actions {
+        display: flex;
+        gap: 5px; /* Space between buttons */
+        justify-content: flex-end; /* Align buttons to the right */
+        margin-top: 5px; /* Space above the buttons */
+    }
+    .dropdown {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+        width: 200px;
+        margin-left: auto;
+        margin-right: 20px;
+    }
+
+    .search-container {
+        display: flex;
+        align-items: center;
+        position: relative;
+        margin-bottom: 0;
+        width: 100%;
+        max-width: 350px;
+    }
+    
+    .admin-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding: 0 20px;
+    }
+    
+    .controls-row {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        align-items: center;
+        margin-top: 20px; /* Reduced from 100px */
+        margin-bottom: 30px;
+        padding: 10px 0 20px;
+        position: relative;
+        z-index: 50; /* Lower than the header's z-index */
+    }
+
+    /* Statistics styling */
+    .chart-container-row {
+        display: flex;
+        justify-content: center;
+        margin: 20px auto;
+        gap: 30px;
+        width: 95%;
+        max-width: 1200px;
+    }
+    
+    .chart-container {
+        width: 45%;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 15px;
+        height: 250px;
+    }
+    
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 230px;
+    }
+    
+    .usage-statistics-header {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        color: #333;
+        font-size: 22px;
+        border-bottom: 2px solid #eee;
+        text-align: center;
+    }
+    
+    #sit-in-records-view {
+        max-width: 1300px;
+        margin: 0 auto 30px auto;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    #sit-in-records-view h2 {
+        margin-top: 10px;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        color: #333;
+        font-size: 22px;
+        border-bottom: 2px solid #eee;
+    }
+    
+    #statistics-view {
+        width: 90%;
+        max-width: 1300px;
+        margin: 30px auto;
+        padding: 20px 30px 30px 30px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .records-container h2 {
+        margin-top: 30px;
+    }
+    
+    #statistics-view .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 30px;
+        gap: 20px;
+    }
+    
+    #statistics-view .pagination button {
+        background-color: blue;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
+    
+    #statistics-view .pagination button:hover {
+        background-color: #0056b3;
+    }
+    
+    #statistics-view .pagination span {
+        font-weight: bold;
+        font-size: 16px;
+        background-color: #f0f0f0;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Common pagination styling for all views */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 30px;
+        gap: 20px;
+    }
+    
+    .pagination button {
+        background-color: blue;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
+    
+    .pagination button:hover {
+        background-color: #0056b3;
+    }
+    
+    .pagination button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+    
+    .pagination span {
+        font-weight: bold;
+        font-size: 16px;
+        background-color: #f0f0f0;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .admin-home {
+        text-decoration: none;
+        color: white;
+        background-color: blue;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: medium;
+        position: relative;
+        left: 27.6%;
+        }
+        .reservation-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 11.3%;
+        }
+
+        .sit-in-reports-header {
+            text-decoration: none;
+            color: white;
+            background-color: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 29.8%;
+        }
+
+        .feedback-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 11%;
+        }
+
+        .announcement-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 5.5%;
+        }
+
+        .statistics-summary {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 0;
+            padding: 10px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .stat-box {
+            background-color: white;
+            position: relative;
+            bottom: 95px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            min-width: 150px;
+            margin: 0 10px;
+        }
+        .stat-box h3 {
+            margin: 0;
+            color: #333;
+            font-size: 14px;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: blue;
+            margin: 5px 0;
+        }
+        .chart-container-single {
+            width: 90%;
+            position: relative;
+            bottom: 120px;
+            left: 80px;
+            max-width: 500px;
+            margin: 15px auto;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Add these styles for the dropdowns */
+        .modal-body select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            height: 38px; /* Match the height of input fields */
+            background-color: white;
+        }
+
+        .modal-body input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            height: 38px;
+        }
+
+        .modal-body label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        /* Leaderboard styling */
+        .leaderboard-container {
+            width: 100%;
+            height: auto;
+            max-height: 450px;
+            position: relative;
+            bottom: 100px;
+            max-width: 600px;
+            margin: 15px auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            padding: 20px 25px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-top: 5px solid #0000FF;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .leaderboard-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        
+        .leaderboard-title {
+            text-align: center;
+            color: #222;
+            font-size: 24px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+            font-weight: bold;
+        }
+        
+        .leaderboard-description {
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+            margin-top: 0px;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+        
+        .leaderboard-table-container {
+            overflow: hidden;
+            flex: 1;
+        }
+        
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2px;
+            border-radius: 8px;
+            overflow: hidden;
+            table-layout: fixed;
+        }
+        
+        .leaderboard-table th, 
+        .leaderboard-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .leaderboard-table th {
+            background-color: #f0f4f8;
+            color: #333;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 14px;
+        }
+        
+        .leaderboard-table th:first-child,
+        .leaderboard-table td:first-child {
+            width: 15%;
+            font-weight: bold;
+        }
+        
+        .leaderboard-table th:nth-child(2),
+        .leaderboard-table td:nth-child(2) {
+            width: 20%;
+        }
+        
+        .leaderboard-table th:nth-child(3),
+        .leaderboard-table td:nth-child(3) {
+            width: 25%;
+        }
+        
+        .leaderboard-table th:nth-child(4),
+        .leaderboard-table td:nth-child(4) {
+            width: 20%;
+        }
+        
+        .leaderboard-table th:last-child,
+        .leaderboard-table td:last-child {
+            width: 15%;
+            font-weight: bold;
+            color: #0000FF;
+        }
+        
+        .leaderboard-table tr:nth-child(1) {
+            background-color: rgba(255, 215, 0, 0.15);
+        }
+        
+        .leaderboard-table tr:nth-child(1) td:first-child:before {
+            content: "🥇";
+            margin-right: 4px;
+            font-size: 14px;
+        }
+        
+        .leaderboard-table tr:nth-child(2) {
+            background-color: rgba(192, 192, 192, 0.15);
+        }
+        
+        .leaderboard-table tr:nth-child(2) td:first-child:before {
+            content: "🥈";
+            margin-right: 4px;
+            font-size: 14px;
+        }
+        
+        .leaderboard-table tr:nth-child(3) {
+            background-color: rgba(205, 127, 50, 0.15);
+        }
+        
+        .leaderboard-table tr:nth-child(3) td:first-child:before {
+            content: "🥉";
+            margin-right: 4px;
+            font-size: 14px;
+        }
+        
+        .leaderboard-table tr:hover {
+            background-color: #f5f9ff;
+        }
+        
+        /* Two-column layout for statistics */
+        .statistics-layout-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            width: 95%;
+            max-width: 1100px;
+            margin: 80px auto 20px; /* Increased top margin from 60px to 80px */
+            position: relative;
+            z-index: 5;
+        }
+        
+        .statistics-left-column {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .statistics-right-column {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-left: 80px; /* Add left padding to shift the leaderboard right */
+        }
+        
+        .statistics-right-column .leaderboard-container {
+            width: 80%;
+            margin: 20px auto;
+        }
+        
+        @media (max-width: 992px) {
+            .statistics-layout-container {
+                flex-direction: column;
+            }
+            
+            .statistics-left-column,
+            .statistics-right-column {
+                width: 100%;
+            }
+        }
+
+        .statistics-summary {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 0;
+            padding: 5px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .statistics-header {
+            position: relative;
+            bottom: 50px;
+            font-size: 22px;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .admin-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000; /* Higher z-index to ensure it stays on top */
+            background-color: #0000FF; /* Keep the blue background */
+            padding: 15px 0;
+        }
+        
+        /* Add padding to body to account for fixed header */
+        body {
+            padding-top: 150px; /* Adjust based on your header height */
+        }
+
+        .trophy-icon {
+            font-size: 22px;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>ADMIN DASHBOARD</h1>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="main-logo">
+            <img src="{{ url_for('static', filename='UC_logo.png') }}" alt="Logo" class="uc-logo">
+            <img src="{{ url_for('static', filename='PSITS_LOGO.png') }}" alt="Logo" class="psits-logo">
+        </div>
+        <a href="/admin_dashboard" class="admin-home">Home</a>
+        <a href="/sit_in_reports" class="sit-in-reports-header">Reports</a>
+        <a href="/Reservation_Actions" class="reservation-header">Reservations</a>
+        <a href="/feedback" class="feedback-header">Feedbacks</a>
+        <a href="/announcements" class="announcement-header">Announcements</a>
+        <a href="/logout" class="admin-logout">Logout</a>
+    </div>
+
+    <div class="admin-container">
+        <div class="controls-row">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by Student ID" onkeyup="searchTable()">
+            <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 50 50"
+                style="fill:#1A1A1A;">
+                <path d="M 21 3 C 11.601563 3 4 10.601563 4 20 C 4 29.398438 11.601563 37 21 37 C 24.355469 37 27.460938 36.015625 30.09375 34.34375 L 42.375 46.625 L 46.625 42.375 L 34.5 30.28125 C 36.679688 27.421875 38 23.878906 38 20 C 38 10.601563 30.398438 3 21 3 Z M 21 7 C 28.199219 7 34 12.800781 34 20 C 34 27.199219 28.199219 33 21 33 C 13.800781 33 8 27.199219 8 20 C 8 12.800781 13.800781 7 21 7 Z"></path>
+                </svg></span>               
+        </div>
+            <select id="view-dropdown" class="dropdown" onchange="handleViewChange()">
+                <option value="student_statistics">Student Statistics</option>
+                <option value="all_students">All Students</option>
+                <option value="active_sessions">Active Student Sessions</option>
+                <option value="current_sit_in">Current Sit-in</option>
+                <option value="sit_in_record">Today's Sit-in Records</option>
+                <option value="statistics">Sit-in Records Statistics</option>
+            </select>
+        </div>
+        
+            <!-- Active Student Sessions Table (Default View) -->
+            <div id="active-sessions-view">
+                <h2>Active Student Sessions</h2>
+                <div class="table-container">
+                    <table id="studentTable">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Purpose</th>
+                                <th>Lab</th>
+                                <th>Status</th>
+                                <th>Remaining Sessions</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for session in active_sessions %}
+                            <tr>
+                                <td>{{ session.student_id }}</td>
+                                <td>{{ session.firstname }} {{ session.lastname }}</td>
+                                <td>{{ session.purpose }}</td>
+                                <td>{{ session.lab }}</td>
+                                <td>{{ session.status }}</td>
+                                <td>{{ session.remaining_sessions }}</td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="sit-in-btn" onclick="openSitInModal('{{ session.student_id }}', '{{ session.firstname }}', '{{ session.lastname }}', '{{ session.purpose }}', '{{ session.lab }}', '{{ session.remaining_sessions }}')">Sit-in</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            <div class="pagination">
+                <button onclick="prevPage('studentTable')">Previous</button>
+                <span id="activeSessionsPageNumber">1</span>
+                <button onclick="nextPage('studentTable')">Next</button>
+            </div>
+            </div>
+        
+            <!-- All Students Table -->
+            <div id="all-students-view" style="display: none;">
+                <h2>All Students</h2>
+                <div class="button-container" style="margin-bottom: 20px; text-align: right;">
+                    <button class="reset-all-btn" onclick="resetAllSessions()" style="background-color: blue; color: white; width: 200px; position: relative; right: 80.5%; padding: 8px 15px; border: none; border-radius: 4px; cursor: pointer;">Reset All Sessions</button>
+                </div>
+                <div class="table-container">
+                    <table id="allStudentsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Full Name</th>
+                                <th>Level</th>
+                                <th>Course</th>
+                                <th>Remaining Sessions</th>
+                                <th>Lab Usage Points</th>
+                                <th>Date Registered</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in all_students %}
+                            <tr>
+                                <td>{{ student.student_id }}</td>
+                                <td>{{ student.firstname }} {{ student.lastname }}</td>
+                                <td>{{ student.yearlevel }}</td>
+                                <td>{{ student.course }}</td>
+                                <td>{{ student.remaining_sessions}}</td>
+                                <td>{{ student.lab_usage_points or 0 }}</td>
+                                <td>{{ student.date_registered }}</td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="sit-in-btn" onclick="openSitInModal('{{ student.student_id }}', '{{ student.firstname }}', '{{ student.lastname }}', '{{ student.purpose }}', '{{ student.lab }}', '{{ student.remaining_sessions }}')">Sit-in</button>
+                                        <button class="add-points-btn" onclick="openAddPointsModal('{{ student.student_id }}', '{{ student.firstname }}', '{{ student.lastname }}')">Add Points</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            <div class="pagination">
+                <button onclick="prevPage('allStudentsTable')">Previous</button>
+                <span id="allStudentsPageNumber">1</span>
+                <button onclick="nextPage('allStudentsTable')">Next</button>
+            </div>
+            </div>
+        
+            <!-- Current Sit-in Table -->
+            <div id="current-sit-in-view" style="display: none;">
+                <h2>Current Sit-in</h2>
+                <div class="table-container">
+                    <table id="currentSitInTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Full Name</th>
+                                <th>Purpose</th>
+                                <th>Lab</th>
+                                <th>Time-in</th>
+                            <th>Status</th>
+                            <th>Remaining Sessions</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sit_in in current_sit_ins %}
+                            <tr>
+                                <td>{{ sit_in.student_id }}</td>
+                                <td>{{ sit_in.firstname }} {{ sit_in.lastname }}</td>
+                                <td>{{ sit_in.purpose }}</td>
+                                <td>{{ sit_in.lab }}</td>
+                                <td>{{ sit_in.time_in }}</td>
+                            <td>{{ sit_in.status }}</td>
+                            <td>{{ sit_in.remaining_sessions }}</td>
+                                <td>
+                                    <button class="end-session-btn" onclick="endSitInSession('{{ sit_in.id }}')">End Session</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            <div class="pagination">
+                <button onclick="prevPage('currentSitInTable')">Previous</button>
+                <span id="currentSitInPageNumber">1</span>
+                <button onclick="nextPage('currentSitInTable')">Next</button>
+            </div>
+            </div>
+        
+            <!-- Current Sit-in Records Table -->
+            <div id="sit-in-records-view" style="display: none;">
+            <h2>Today's Sit-in Records</h2>
+                <div class="table-container">
+                    <table id="sitInRecordsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Full Name</th>
+                                <th>Purpose</th>
+                                <th>Lab</th>
+                                <th>Time-in</th>
+                                <th>Time-out</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in sit_in_records %}
+                            <tr>
+                                <td>{{ record.student_id }}</td>
+                                <td>{{ record.firstname }} {{ record.lastname }}</td>
+                                <td>{{ record.purpose }}</td>
+                                <td>{{ record.lab }}</td>
+                                <td>{{ record.time_in }}</td>
+                                <td>{{ record.time_out }}</td>
+                                <td>{{ record.date }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            <div class="pagination">
+                <button onclick="prevPage('sitInRecordsTable')">Previous</button>
+                <span id="sitInRecordsPageNumber">1</span>
+                <button onclick="nextPage('sitInRecordsTable')">Next</button>
+            </div>
+        </div>
+
+        <!-- Statistics View -->
+        <div id="statistics-view" style="display: none;">
+            <h2 class="usage-statistics-header">Sit-in Records Statistics</h2>
+            <div class="chart-container-row">
+                <div class="chart-container">
+                    <canvas id="statisticsPurposeChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="statisticsLabChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Statistics View -->
+        <div id="student-statistics-view" style="display: none;">
+            <h2 class="statistics-header">Student Statistics</h2>
+            
+            <!-- Two-column layout container -->
+            <div class="statistics-layout-container">
+                <!-- Left column: Stats and chart -->
+                <div class="statistics-left-column">
+                    <div class="statistics-summary">
+                        <div class="stat-box">
+                            <h3>Students Registered</h3>
+                            <p class="stat-number">{{ total_students }}</p>
+                        </div>
+                        <div class="stat-box">
+                            <h3>Currently Sit-in</h3>
+                            <p class="stat-number">{{ current_sit_in_count }}</p>
+                        </div>
+                        <div class="stat-box">
+                            <h3>Total Sit-ins</h3>
+                            <p class="stat-number">{{ total_sit_ins }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container-single">
+                        <canvas id="studentPurposeChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Right column: Leaderboard -->
+                <div class="statistics-right-column">
+                    <!-- Leaderboard Section -->
+                    <div class="leaderboard-container">
+                        <h3 class="leaderboard-title">Top 5 Most Active Students <span class="trophy-icon">🏆</span></h3>
+                        <p class="leaderboard-description">Students with the highest number of sit-in sessions</p>
+                        <div class="leaderboard-table-container">
+                            <table class="leaderboard-table">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Student ID</th>
+                                        <th>Name</th>
+                                        <th>Course</th>
+                                        <th>Sessions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in top_students %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>{{ student.student_id }}</td>
+                                        <td>{{ student.name }}</td>
+                                        <td>{{ student.course }}</td>
+                                        <td>{{ student.sit_in_count }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sitInModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSitInModal()">&times;</span>
+            <center><h2>Sit-In Form</h2></center>
+            <form id="sitInForm">
+                <label for="studentId">Student ID:</label>
+                <input type="text" id="studentId" name="studentId" readonly>
+    
+                <label for="fullName">Full Name:</label>
+                <input type="text" id="fullName" name="fullName" readonly>
+    
+                <label for="purpose">Purpose:</label>
+                <select id="purpose" name="purpose">
+                    <option value="">Select a programming language</option>
+                    <option value="C#">C#</option>
+                    <option value="Java">Java</option>
+                    <option value="C">C</option>
+                    <option value="C++">C++</option>
+                    <option value="JavaScript">JavaScript</option>
+                    <option value="PHP">PHP</option>
+                </select>
+                <input type="text" id="purposeText" name="purposeText" style="display: none;" readonly>
+    
+                <label for="lab">Laboratory:</label>
+                <select id="lab" name="lab">
+                    <option value="">Select a laboratory</option>
+                    <option value="524">524</option>
+                    <option value="544">544</option>
+                    <option value="523">523</option>
+                    <option value="526">526</option>
+                    <option value="Mac lab">Mac lab</option>
+                </select>
+                <input type="text" id="labText" name="labText" style="display: none;" readonly>
+    
+                <label for="remainingSessions">Remaining Sessions:</label>
+                <input type="text" id="remainingSessions" name="remainingSessions" readonly>
+    
+                <div class="actions">
+                    <button type="button" onclick="confirmSitIn()">Confirm</button>
+                    <button type="button" onclick="closeSitInModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Points Modal -->
+    <div id="addPointsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddPointsModal()">&times;</span>
+            <h2>Add Lab Usage Points</h2>
+            <p>Every 3 points will be converted to 1 sit-in session. Points are automatically converted when you have enough for a session.</p>
+            <form id="addPointsForm" method="POST" action="/admin_dashboard/add_points">
+                <label for="pointsStudentId">Student ID:</label>
+                <input type="text" id="pointsStudentId" name="student_id" readonly>
+    
+                <label for="pointsFullName">Full Name:</label>
+                <input type="text" id="pointsFullName" name="fullname" readonly>
+    
+                <label for="pointsToAdd">Points to Add:</label>
+                <input type="number" id="pointsToAdd" name="points" min="1" value="1" required>
+    
+                <div class="actions">
+                    <button type="button" onclick="confirmAddPoints()">Add Points</button>
+                    <button type="button" onclick="closeAddPointsModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Pagination variables for each table
+        const paginationState = {
+            'studentTable': { currentPage: 1 },
+            'allStudentsTable': { currentPage: 1 },
+            'currentSitInTable': { currentPage: 1 },
+            'sitInRecordsTable': { currentPage: 1 }
+        };
+        
+        const rowsPerPage = 5;
+        
+        // Store data from Flask in variables to avoid linter errors
+        const purposeStatsData = JSON.parse('{{ purpose_stats | tojson | safe }}');
+        const labStatsData = JSON.parse('{{ lab_stats | tojson | safe }}');
+
+        function paginateTable(tableId) {
+            let table = document.getElementById(tableId);
+            if (!table) return;
+            
+            let rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+            let totalRows = rows.length;
+            let totalPages = Math.ceil(totalRows / rowsPerPage);
+            let currentPage = paginationState[tableId].currentPage;
+            
+            // Update the page number display based on table ID
+            let pageNumberId;
+            switch(tableId) {
+                case 'studentTable':
+                    pageNumberId = 'activeSessionsPageNumber';
+                    break;
+                case 'allStudentsTable':
+                    pageNumberId = 'allStudentsPageNumber';
+                    break;
+                case 'currentSitInTable':
+                    pageNumberId = 'currentSitInPageNumber';
+                    break;
+                case 'sitInRecordsTable':
+                    pageNumberId = 'sitInRecordsPageNumber';
+                    break;
+                default:
+                    return;
+            }
+            
+            document.getElementById(pageNumberId).innerText = currentPage;
+
+            for (let i = 0; i < totalRows; i++) {
+                rows[i].style.display = (i >= (currentPage - 1) * rowsPerPage && i < currentPage * rowsPerPage) ? "" : "none";
+            }
+
+            // Find the pagination buttons for this table
+            const paginationContainer = table.closest('div.table-container').nextElementSibling;
+            const prevButton = paginationContainer.querySelector('button:first-child');
+            const nextButton = paginationContainer.querySelector('button:last-child');
+            
+            prevButton.disabled = currentPage === 1;
+            nextButton.disabled = currentPage === totalPages || totalRows === 0;
+        }
+
+        function nextPage(tableId) {
+            let table = document.getElementById(tableId);
+            if (!table) return;
+            
+            let rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+            let totalRows = rows.length;
+            
+            if (paginationState[tableId].currentPage * rowsPerPage < totalRows) {
+                paginationState[tableId].currentPage++;
+                paginateTable(tableId);
+            }
+        }
+
+        function prevPage(tableId) {
+            if (paginationState[tableId].currentPage > 1) {
+                paginationState[tableId].currentPage--;
+                paginateTable(tableId);
+            }
+        }
+
+        function initializePagination() {
+            paginateTable('studentTable');
+            paginateTable('allStudentsTable');
+            paginateTable('currentSitInTable');
+            paginateTable('sitInRecordsTable');
+        }
+
+        // Initialize pagination on page load
+        document.addEventListener("DOMContentLoaded", initializePagination);
+
+        function searchTable() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let rows = document.querySelectorAll("table tr");
+
+            rows.forEach((row, index) => {
+                if (index === 0) return; // Skip table header
+                let studentID = row.cells[0].textContent.toLowerCase();
+                row.style.display = studentID.includes(input) ? "" : "none";
+            });
+        }
+
+        function downloadReport(type) {
+            window.location.href = `/download_report/${type}`;
+        }
+
+        function endSession(studentId) {
+            if (!confirm("Are you sure you want to end this session?")) {
+                return;
+            }
+
+            fetch('/end_session/' + studentId, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Session ended. Remaining sessions updated.");
+                    location.reload();
+                } else {
+                    alert("Error: " + (data.error || "Failed to end session."));
+                }
+            })
+            .catch(error => {
+                alert("Network error. Please try again.");
+            });
+        }
+
+        function resetSession(studentId) {
+            if (!confirm("Are you sure you want to reset this session?")) {
+                return;
+            }
+
+            fetch('/reset_session/' + studentId, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Session reset. Remaining sessions updated.");
+                    location.reload();
+                } else {
+                    alert("Error: " + (data.error || "Failed to reset session."));
+                }
+            })
+            .catch(error => {
+                alert("Network error. Please try again.");
+            });
+        }
+
+        function openSitInModal(studentId, firstName, lastName, purpose, lab, remainingSessions) {
+            document.getElementById("studentId").value = studentId;
+            document.getElementById("fullName").value = `${firstName} ${lastName}`;
+            document.getElementById("remainingSessions").value = remainingSessions;
+
+            // Get the select and text elements
+            const purposeSelect = document.getElementById("purpose");
+            const purposeText = document.getElementById("purposeText");
+            const labSelect = document.getElementById("lab");
+            const labText = document.getElementById("labText");
+
+            if (purpose && lab) {
+                // This is a student with reservation - show text fields with pre-filled values
+                purposeSelect.style.display = "none";
+                purposeText.style.display = "block";
+                purposeText.value = purpose;
+
+                labSelect.style.display = "none";
+                labText.style.display = "block";
+                labText.value = lab;
+            } else {
+                // This is from All Students - show select dropdowns
+                purposeSelect.style.display = "block";
+                purposeText.style.display = "none";
+                purposeSelect.value = "";
+
+                labSelect.style.display = "block";
+                labText.style.display = "none";
+                labSelect.value = "";
+            }
+
+            document.getElementById("sitInModal").style.display = "block";
+        }
+
+        function closeSitInModal() {
+            document.getElementById("sitInModal").style.display = "none";
+        }
+
+        function confirmSitIn() {
+            const studentId = document.getElementById("studentId").value;
+            const purpose = document.getElementById("purpose").style.display === "none" ? 
+                          document.getElementById("purposeText").value : 
+                          document.getElementById("purpose").value;
+            const lab = document.getElementById("lab").style.display === "none" ? 
+                       document.getElementById("labText").value : 
+                       document.getElementById("lab").value;
+
+            // Validate selections for non-reservation sit-ins
+            if (document.getElementById("purpose").style.display !== "none") {
+                if (!purpose) {
+                    alert("Please select a purpose");
+                    return;
+                }
+                if (!lab) {
+                    alert("Please select a laboratory");
+                    return;
+                }
+            }
+
+            fetch('/sit_in/' + studentId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    purpose: purpose,
+                    lab: lab
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Student has been sat in.");
+                    location.reload();
+                } else {
+                    alert("Error: " + (data.error || "Failed to sit in student."));
+                }
+            })
+            .catch(error => {
+                alert("Network error. Please try again.");
+            });
+        }
+
+        // Function to reset all student sessions
+        function resetAllSessions() {
+            if (!confirm("Are you sure you want to reset sessions for all students? This will set their remaining sessions back to default values (30 for BSIT/BSCS, 15 for others).")) {
+                return;
+            }
+
+            fetch('/reset_all_sessions', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("All student sessions have been reset successfully.");
+                    location.reload();
+                } else {
+                    alert("Error: " + (data.error || "Failed to reset sessions."));
+                }
+            })
+            .catch(error => {
+                alert("Network error. Please try again.");
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", paginateTable);
+
+        function toggleDropdown(dropdownId) {
+            var dropdown = document.getElementById(dropdownId);
+            dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+        }
+
+        function generateReport() {
+            var reportType = document.getElementById("report-type").value;
+            var reportFrame = document.getElementById("report-frame");
+            var reportContainer = document.getElementById("report-container");
+
+            reportFrame.src = "/download_report/" + reportType;
+            reportContainer.style.display = "block";
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function(event) {
+            var dropdown = document.getElementById("report-dropdown");
+            var reportLink = document.querySelector(".nav-links a[onclick]");
+
+            if (!reportLink.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = "none";
+            }
+        });
+
+        function generateReport() {
+            var reportType = document.getElementById("report-type").value;
+
+            fetch("/download_report/" + reportType)
+                .then(response => response.json())
+                .then(data => {
+                    var reportLink = document.getElementById("report-link");
+                    var reportContainer = document.getElementById("report-container");
+
+                    // Set the file name and download link
+                    reportLink.href = data.file_url;
+                    reportLink.download = data.file_name;
+                    reportLink.textContent = "Download " + data.file_name;
+
+                    // Show the container with the link
+                    reportContainer.style.display = "block";
+                })
+                .catch(error => console.error("Error generating report:", error));
+        }
+
+        function handleViewChange() {
+            const viewDropdown = document.getElementById('view-dropdown');
+            const selectedView = viewDropdown.value;
+            
+            // Hide all views
+            document.getElementById('active-sessions-view').style.display = 'none';
+            document.getElementById('all-students-view').style.display = 'none';
+            document.getElementById('current-sit-in-view').style.display = 'none';
+            document.getElementById('sit-in-records-view').style.display = 'none';
+            document.getElementById('statistics-view').style.display = 'none';
+            document.getElementById('student-statistics-view').style.display = 'none';
+            
+            // Show selected view
+            if (selectedView === 'active_sessions') {
+                document.getElementById('active-sessions-view').style.display = 'block';
+                paginateTable('studentTable');
+            } else if (selectedView === 'all_students') {
+                document.getElementById('all-students-view').style.display = 'block';
+                paginateTable('allStudentsTable');
+            } else if (selectedView === 'current_sit_in') {
+                document.getElementById('current-sit-in-view').style.display = 'block';
+                paginateTable('currentSitInTable');
+            } else if (selectedView === 'sit_in_record') {
+                document.getElementById('sit-in-records-view').style.display = 'block';
+                paginateTable('sitInRecordsTable');
+            } else if (selectedView === 'statistics') {
+                document.getElementById('statistics-view').style.display = 'block';
+                renderStatisticsCharts();
+            } else if (selectedView === 'student_statistics') {
+                document.getElementById('student-statistics-view').style.display = 'block';
+                renderStudentStatistics();
+            }
+        }
+
+        function endSitInSession(sitInId) {
+            if (confirm("Are you sure you want to end this sit-in session?")) {
+                fetch(`/end_sit_in/${sitInId}`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Sit-in session ended.");
+                        location.reload();
+                    } else {
+                        alert("Error: " + (data.error || "Failed to end sit-in session."));
+                    }
+                })
+                .catch(error => {
+                    alert("Network error. Please try again.");
+                });
+            }
+        }
+
+        function renderStudentStatistics() {
+            const ctx = document.getElementById('studentPurposeChart').getContext('2d');
+            
+            // Use the purpose_stats data passed from Flask
+            const purposeData = purposeStatsData;
+            
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: purposeData.map(item => item.purpose),
+                    datasets: [{
+                        data: purposeData.map(item => item.count),
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 20,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Purpose Distribution',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function openAddPointsModal(studentId, firstName, lastName) {
+            const modal = document.getElementById('addPointsModal');
+            document.getElementById('pointsStudentId').value = studentId;
+            document.getElementById('pointsFullName').value = firstName + ' ' + lastName;
+            modal.style.display = 'block';
+        }
+
+        function closeAddPointsModal() {
+            document.getElementById('addPointsModal').style.display = 'none';
+        }
+
+        function confirmAddPoints() {
+            const studentId = document.getElementById('pointsStudentId').value;
+            const points = parseInt(document.getElementById('pointsToAdd').value);
+            
+            if (!studentId || points <= 0) {
+                alert('Please enter valid points (greater than 0)');
+                return;
+            }
+            
+            // Create form data for submission
+            const formData = new FormData();
+            formData.append('student_id', studentId);
+            formData.append('points', points);
+            
+            // Use XMLHttpRequest instead of fetch for better compatibility
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/admin_dashboard/add_points', true);
+            
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            let successMessage = response.message;
+                            
+                            // Add details about updated table values
+                            successMessage += `\n\nUpdated values:`;
+                            successMessage += `\n- Lab Usage Points: ${response.remaining_points}`;
+                            successMessage += `\n- Remaining Sessions: ${response.remaining_sessions}`;
+                            
+                            alert(successMessage);
+                            closeAddPointsModal();
+                            
+                            // Reload to show updated values
+                            window.location.reload();
+                        } else {
+                            alert('Error: ' + (response.error || 'Failed to add points'));
+                        }
+                    } catch (e) {
+                        console.error('Error parsing response:', e);
+                        alert('Unexpected response format. Please try again.');
+                    }
+                } else {
+                    console.error('Request failed with status:', xhr.status);
+                    alert('Network error. Server responded with status: ' + xhr.status);
+                }
+            };
+            
+            xhr.onerror = function() {
+                console.error('Request failed');
+                alert('Network error. Please try again.');
+            };
+            
+            xhr.send(formData);
+        }
+
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+    
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Chart rendering functions
+        function renderCharts() {
+            renderSitInViewCharts();
+        }
+        
+        // Render charts in the statistics view
+        function renderStatisticsCharts() {
+            const purposeCtx = document.getElementById('statisticsPurposeChart').getContext('2d');
+            const labCtx = document.getElementById('statisticsLabChart').getContext('2d');
+            
+            renderPurposeChart(purposeCtx);
+            renderLabChart(labCtx);
+        }
+        
+        function renderPurposeChart(ctx) {
+            // Parse purpose data from the template
+            const purposeData = purposeStatsData;
+            
+            // Extract labels and counts for purpose
+            const purposeLabels = purposeData.map(item => item.purpose);
+            const purposeCounts = purposeData.map(item => item.count);
+            
+            // Create chart with random colors
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: purposeLabels,
+                    datasets: [{
+                        data: purposeCounts,
+                        backgroundColor: generateRandomColors(purposeLabels.length),
+                        hoverOffset: 6,
+                        borderWidth: 1,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 0,
+                            bottom: 5
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 10,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Purpose Distribution',
+                            position: 'top',
+                            align: 'center',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 0,
+                                bottom: 10
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function renderLabChart(ctx) {
+            // Parse lab data from the template
+            const labData = labStatsData;
+            
+            // Extract labels and counts for labs
+            const labLabels = labData.map(item => item.lab);
+            const labCounts = labData.map(item => item.count);
+            
+            // Create chart with random colors
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labLabels,
+                    datasets: [{
+                        data: labCounts,
+                        backgroundColor: generateRandomColors(labLabels.length),
+                        hoverOffset: 6,
+                        borderWidth: 1,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 0,
+                            bottom: 5
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 10,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Laboratory Usage',
+                            position: 'top',
+                            align: 'center',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 0,
+                                bottom: 10
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Helper function to generate better colors for the chart
+        function generateRandomColors(count) {
+            // Predefined color palette for better visual appeal
+            const colorPalette = [
+                'rgb(54, 162, 235)',   // Blue
+                'rgb(255, 99, 132)',   // Pink
+                'rgb(75, 192, 192)',   // Teal
+                'rgb(255, 159, 64)',   // Orange
+                'rgb(153, 102, 255)',  // Purple
+                'rgb(255, 205, 86)',   // Yellow
+                'rgb(201, 203, 207)',  // Grey
+                'rgb(255, 99, 71)',    // Tomato
+                'rgb(50, 205, 50)',    // Lime Green
+                'rgb(138, 43, 226)'    // Blue Violet
+            ];
+            
+            // If we have more data points than colors, generate additional colors
+            if (count <= colorPalette.length) {
+                return colorPalette.slice(0, count);
+            } else {
+                const colors = [...colorPalette];
+                for (let i = colorPalette.length; i < count; i++) {
+                    const r = Math.floor(Math.random() * 180) + 70; // Avoid too dark or bright colors
+                    const g = Math.floor(Math.random() * 180) + 70;
+                    const b = Math.floor(Math.random() * 180) + 70;
+                    colors.push(`rgb(${r}, ${g}, ${b})`);
+                }
+                return colors;
+            }
+        }
+
+        // Initialize the app when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up event listener for view change
+            const viewDropdown = document.getElementById('view-dropdown');
+            viewDropdown.addEventListener('change', handleViewChange);
+            
+            // Initialize view based on default selection
+            handleViewChange();
+        });
+    </script>
+</body>
+</html>

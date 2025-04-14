@@ -1,0 +1,265 @@
+<!-- templates/feedback.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .logo {
+            display: flex;
+            align-items: center;
+            position: relative;
+            right: 20%;
+            left: 21%;
+            gap: 15px;
+        }
+        .admin-home {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 31.3%;
+        }
+        .reservation-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 13.3%;
+        }
+        .sit-in-reports-header {
+            text-decoration: none;
+            color: white;
+            background-color: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 33%;
+        }
+        .feedback-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 12.6%;
+        }
+        .announcement-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 6.3%;
+        }
+        .export-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .export-btn {
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 14px;
+        }
+        .export-btn:hover {
+            background-color: #0056b3;
+        }
+        #exportFormat {
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        
+        /* New table scrollable styles */
+        .feedback-container {
+            width: 90%;
+            margin: 0 auto;
+        }
+        
+        .table-wrapper {
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        #feedbackTable {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+        
+        #feedbackTable thead th {
+            position: sticky;
+            top: 0;
+            background-color: #444;
+            color: white;
+            z-index: 1;
+            padding: 15px;
+        }
+        
+        #feedbackTable td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        #feedbackTable tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Adjust column widths */
+        #feedbackTable th:nth-child(1), 
+        #feedbackTable td:nth-child(1) {
+            width: 5%;
+        }
+        
+        #feedbackTable th:nth-child(2), 
+        #feedbackTable td:nth-child(2) {
+            width: 10%;
+        }
+        
+        #feedbackTable th:nth-child(3), 
+        #feedbackTable td:nth-child(3) {
+            width: 15%;
+        }
+        
+        #feedbackTable th:nth-child(4), 
+        #feedbackTable td:nth-child(4) {
+            width: 10%;
+        }
+        
+        #feedbackTable th:nth-child(5), 
+        #feedbackTable td:nth-child(5) {
+            width: 10%;
+        }
+        
+        #feedbackTable th:nth-child(6), 
+        #feedbackTable td:nth-child(6) {
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>FEEDBACKS</h1>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="main-logo">
+            <img src="{{ url_for('static', filename='UC_logo.png') }}" alt="Logo" class="uc-logo">
+            <img src="{{ url_for('static', filename='PSITS_LOGO.png') }}" alt="Logo" class="psits-logo">
+        </div>
+        <a href="/admin_dashboard" class="admin-home">Home</a>
+        <a href="/sit_in_reports" class="sit-in-reports-header">Reports</a>
+        <a href="/Reservation_Actions" class="reservation-header">Reservations</a>
+        <a href="/feedback" class="feedback-header">Feedbacks</a>
+        <a href="/announcements" class="announcement-header">Announcements</a>
+        <a href="/logout" class="admin-logout">Logout</a>
+    </div>
+    <div class="feedback-container">
+        <center><h2>Feedback Reports</h2></center>
+        <div class="export-controls">
+            <select id="exportFormat">
+                <option value="excel">Excel</option>
+                <option value="csv">CSV</option>
+                <option value="pdf">PDF</option>
+            </select>
+            <button class="export-btn" onclick="exportFeedback()">Export Report</button>
+        </div>
+        <div class="table-wrapper">
+            <table id="feedbackTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student ID</th>
+                        <th>Full Name</th>
+                        <th>Lab</th>
+                        <th>Date</th>
+                        <th>Feedback Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feedback in feedbacks %}
+                    <tr>
+                        <td>{{ feedback.id }}</td>
+                        <td>{{ feedback.student_id }}</td>
+                        <td>{{ feedback.firstname }} {{ feedback.lastname }}</td>
+                        <td>{{ feedback.lab }}</td>
+                        <td>{{ feedback.created_at }}</td>
+                        <td>{{ feedback.feedback_text }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function exportFeedback() {
+            const format = document.getElementById("exportFormat").value;
+            const table = document.getElementById("feedbackTable");
+            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+            const rows = Array.from(table.querySelectorAll('tbody tr')).map(row => {
+                return Array.from(row.querySelectorAll('td')).map(cell => cell.textContent.trim());
+            });
+
+            const data = {
+                format: format,
+                data: {
+                    headers: headers,
+                    rows: rows.map(row => {
+                        const rowData = {};
+                        headers.forEach((header, index) => {
+                            rowData[header] = row[index];
+                        });
+                        return rowData;
+                    })
+                }
+            };
+
+            fetch('/export_report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `feedback_report.${format === 'excel' ? 'xlsx' : format === 'csv' ? 'csv' : 'pdf'}`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+            })
+            .catch(error => {
+                console.error('Export error:', error);
+                alert(`Error exporting to ${format.toUpperCase()}: ${error.message}`);
+            });
+        }
+    </script>
+</body>
+</html>

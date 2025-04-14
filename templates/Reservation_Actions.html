@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .logo {
+            display: flex;
+            align-items: center;
+            position: relative;
+            left: 283px;
+            gap: 15px; /* Adjust space between logos */
+        }
+        .admin-home {
+        text-decoration: none;
+        color: white;
+        background-color: blue;
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: medium;
+        position: relative;
+        left: 30.4%;
+        }
+        .reservation-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 13%;
+        }
+
+        .sit-in-reports-header {
+            text-decoration: none;
+            color: white;
+            background-color: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 32.05%;
+        }
+
+        .feedback-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 12.1%;
+        }
+
+        .announcement-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: 6.05%;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>RESERVATIONS</h1>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="main-logo">
+            <img src="{{ url_for('static', filename='UC_logo.png') }}" alt="Logo" class="uc-logo">
+            <img src="{{ url_for('static', filename='PSITS_LOGO.png') }}" alt="Logo" class="psits-logo">
+        </div>
+        <a href="/admin_dashboard" class="admin-home">Home</a>
+        <a href="/sit_in_reports" class="sit-in-reports-header">Reports</a>
+        <a href="/Reservation_Actions" class="reservation-header">Reservations</a>
+        <a href="/feedback" class="feedback-header">Feedbacks</a>
+        <a href="/announcements" class="announcement-header">Announcements</a>
+        <a href="/logout" class="admin-logout">Logout</a>
+    </div>   
+    <div class="admin-container">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by Student ID" onkeyup="searchTable()">
+            <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 50 50"
+                style="fill:#1A1A1A;">
+                <path d="M 21 3 C 11.601563 3 4 10.601563 4 20 C 4 29.398438 11.601563 37 21 37 C 24.355469 37 27.460938 36.015625 30.09375 34.34375 L 42.375 46.625 L 46.625 42.375 L 34.5 30.28125 C 36.679688 27.421875 38 23.878906 38 20 C 38 10.601563 30.398438 3 21 3 Z M 21 7 C 28.199219 7 34 12.800781 34 20 C 34 27.199219 28.199219 33 21 33 C 13.800781 33 8 27.199219 8 20 C 8 12.800781 13.800781 7 21 7 Z"></path>
+                </svg></span>               
+        </div>
+        <h2>Reservations</h2>
+        <div class="table-container">
+            <table id="reservationTable">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Lab</th>
+                        <th>Purpose</th>
+                        <th>Reservation Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in reservations %}
+                    <tr>
+                        <td>{{ reservation.student_id }}</td>
+                        <td>{{ reservation.firstname }} {{ reservation.lastname }}</td>
+                        <td>{{ reservation.lab }}</td>
+                        <td>{{ reservation.purpose }}</td>
+                        <td>{{ reservation.date }} {{ reservation.time }}</td>
+                        <td>{{ reservation.status }}</td>
+                        <td>
+                        <div class="actions">
+                            {% if reservation.status == "Pending" %}
+                            <button class="accept-btn" onclick="acceptReservation('{{ reservation.id }}')">Accept</button>
+                            <button class="decline-btn" onclick="declineReservation('{{ reservation.id }}')">Decline</button>
+                            {% else %}
+                            <span>{{ reservation.status }}</span>
+                            {% endif %}
+                        </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        function acceptReservation(reservationId) {
+    if (confirm("Are you sure you want to accept this reservation?")) {
+        fetch(`/accept_reservation/${reservationId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken() // Add CSRF token
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Reservation accepted.");
+                location.reload();
+            } else {
+                alert("Error: " + (data.error || "Failed to accept reservation."));
+            }
+        })
+        .catch(error => {
+            alert("Network error. Please try again.");
+        });
+    }
+}
+
+function getCsrfToken() {
+    return document.cookie.split('; ')
+        .find(row => row.startsWith('csrf_token='))
+        ?.split('=')[1];
+}
+
+
+        function declineReservation(reservationId) {
+            if (confirm("Are you sure you want to decline this reservation?")) {
+                fetch(`/decline_reservation/${reservationId}`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Reservation declined.");
+                        location.reload();
+                    } else {
+                        alert("Error: " + (data.error || "Failed to decline reservation."));
+                    }
+                })
+                .catch(error => {
+                    alert("Network error. Please try again.");
+                });
+            }
+        }
+
+        function searchTable() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let rows = document.querySelectorAll("table tr");
+
+            rows.forEach((row, index) => {
+                if (index === 0) return; // Skip table header
+                let studentID = row.cells[0].textContent.toLowerCase();
+                row.style.display = studentID.includes(input) ? "" : "none";
+            });
+        }
+
+    </script>
+</body>
+</html>
