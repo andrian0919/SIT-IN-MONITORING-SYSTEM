@@ -66,6 +66,36 @@
             position: relative;
             left: 6.05%;
         }
+
+        /* Highlight for pending reservations */
+        .pending-reservation {
+            background-color: rgba(255, 255, 0, 0.2); /* Light yellow background */
+            font-weight: bold;
+        }
+        
+        .pending-reservation td {
+            border-bottom: 1px solid #ccc;
+        }
+        
+        /* Style for the action buttons */
+        .accept-btn {
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        
+        .decline-btn {
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -107,7 +137,7 @@
                 </thead>
                 <tbody>
                     {% for reservation in reservations %}
-                    <tr>
+                    <tr {% if reservation.status == "Pending" %}class="pending-reservation"{% endif %}>
                         <td>{{ reservation.student_id }}</td>
                         <td>{{ reservation.firstname }} {{ reservation.lastname }}</td>
                         <td>{{ reservation.lab }}</td>
@@ -133,35 +163,34 @@
     
     <script>
         function acceptReservation(reservationId) {
-    if (confirm("Are you sure you want to accept this reservation?")) {
-        fetch(`/accept_reservation/${reservationId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken() // Add CSRF token
+            if (confirm("Are you sure you want to accept this reservation?")) {
+                fetch(`/accept_reservation/${reservationId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrf_token') // Add CSRF token if needed
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Reservation accepted.");
+                        location.reload();
+                    } else {
+                        alert("Error: " + (data.error || "Failed to accept reservation."));
+                    }
+                })
+                .catch(error => {
+                    alert("Network error. Please try again.");
+                });
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Reservation accepted.");
-                location.reload();
-            } else {
-                alert("Error: " + (data.error || "Failed to accept reservation."));
-            }
-        })
-        .catch(error => {
-            alert("Network error. Please try again.");
-        });
-    }
-}
+        }
 
-function getCsrfToken() {
-    return document.cookie.split('; ')
-        .find(row => row.startsWith('csrf_token='))
-        ?.split('=')[1];
-}
-
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
 
         function declineReservation(reservationId) {
             if (confirm("Are you sure you want to decline this reservation?")) {
@@ -193,7 +222,6 @@ function getCsrfToken() {
                 row.style.display = studentID.includes(input) ? "" : "none";
             });
         }
-
     </script>
 </body>
 </html>

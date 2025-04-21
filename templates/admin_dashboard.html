@@ -627,6 +627,28 @@
             margin-left: 5px;
             vertical-align: middle;
         }
+
+        .end-session-btn {
+            background-color: red;
+            color: white;
+        }
+        
+        .reset-session-btn {
+            background-color: blue;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .reset-session-btn:hover {
+            background-color: #0056b3;
+        }
+        
+        /* Table styles */
     </style>
 </head>
 <body>
@@ -740,6 +762,7 @@
                                     <div class="actions">
                                         <button class="sit-in-btn" onclick="openSitInModal('{{ student.student_id }}', '{{ student.firstname }}', '{{ student.lastname }}', '{{ student.purpose }}', '{{ student.lab }}', '{{ student.remaining_sessions }}')">Sit-in</button>
                                         <button class="add-points-btn" onclick="openAddPointsModal('{{ student.student_id }}', '{{ student.firstname }}', '{{ student.lastname }}')">Add Points</button>
+                                        <button class="reset-session-btn" onclick="resetSession('{{ student.student_id }}')">Reset Session</button>
                                     </div>
                                 </td>
                             </tr>

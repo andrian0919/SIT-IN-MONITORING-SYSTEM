@@ -35,8 +35,13 @@ app.config['MAIL_USERNAME'] = 'your-email@gmail.com'
 app.config['MAIL_PASSWORD'] = 'your-email-password'
 mail = Mail(app)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "mssql+pyodbc://localhost\\SQLEXPRESS01/SitInMonitoring?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///sit_in_monitoring.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# Make sure the database directory exists
+database_dir = os.path.dirname(app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", ""))
+if database_dir and not os.path.exists(database_dir):
+    os.makedirs(database_dir)
 
 # Initialize the database with the app
 db.init_app(app)
@@ -58,6 +63,7 @@ class User(db.Model):
     yearlevel = db.Column(db.String(20), nullable=True) 
     role = db.Column(db.String(20), nullable=False, default="student")
     date_registered = db.Column(db.DateTime, default=datetime.utcnow) 
+    password_reset_token = db.Column(db.String(50), nullable=True)  # Added for password reset functionality
 
 
 # Define the Sessions model
@@ -355,7 +361,7 @@ def admin_dashboard():
     # Format lab stats for JSON
     lab_stats_list = [{"lab": l.lab, "count": l.count} for l in lab_stats]
 
-    # Fetch Top 5 most active students (most sit-ins)
+    # Fetch top 5 most active students (most sit-ins)
     top_students = (
         db.session.query(
             User.student_id,
@@ -712,7 +718,13 @@ def make_reservation():
 
 @app.route("/admin_reservations")
 def admin_reservations():
-    reservations = Reservation.query.all()
+    # First get pending reservations, then get others, and combine them
+    pending_reservations = Reservation.query.filter_by(status="Pending").order_by(Reservation.id.desc()).all()
+    other_reservations = Reservation.query.filter(Reservation.status != "Pending").all()
+    
+    # Combine lists to show pending reservations at top
+    reservations = pending_reservations + other_reservations
+    
     print("Fetched reservations:", reservations)  # Debugging
     return render_template("Reservation_Actions.html", reservations=reservations)
 
@@ -1044,7 +1056,13 @@ def reservation_actions():
     if "user_id" not in session or session.get("role") != "admin":
         flash("Access denied!", "error")
         return redirect(url_for("home"))
-    reservations = Reservation.query.all()
+    
+    # First get pending reservations, then get others, and combine them
+    pending_reservations = Reservation.query.filter_by(status="Pending").order_by(Reservation.id.desc()).all()
+    other_reservations = Reservation.query.filter(Reservation.status != "Pending").all()
+    
+    # Combine lists to show pending reservations at top
+    reservations = pending_reservations + other_reservations
     
     return render_template("Reservation_Actions.html", reservations=reservations)
 
