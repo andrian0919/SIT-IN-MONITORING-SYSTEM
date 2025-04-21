@@ -23,7 +23,7 @@ from reportlab.lib.pagesizes import letter, landscape
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
 
-app = Flask(__name__)
+app = Flask(__name__, instance_path=os.path.join(os.getcwd(), "SQLITE"), instance_relative_config=True)
 app.secret_key = "sysarch32"
 app.permanent_session_lifetime = timedelta(days=7)
 
@@ -39,9 +39,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///sit_in_monitoring.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Make sure the database directory exists
-database_dir = os.path.dirname(app.config["SQLALCHEMY_DATABASE_URI"].replace("sqlite:///", ""))
-if database_dir and not os.path.exists(database_dir):
-    os.makedirs(database_dir)
+os.makedirs(app.instance_path, exist_ok=True)
 
 # Initialize the database with the app
 db.init_app(app)
