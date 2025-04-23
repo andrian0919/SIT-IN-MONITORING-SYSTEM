@@ -515,6 +515,7 @@ def success():
     # Get remaining sessions
     session_record = SessionRecord.query.filter_by(user_id=session["user_id"]).first()
     remaining_sessions = session_record.remaining_sessions if session_record else 0
+    lab_usage_points = session_record.lab_usage_points if session_record else 0
     
     # Add profile picture
     uploads_folder = os.path.join("static", "uploads")
@@ -527,7 +528,7 @@ def success():
     
     profile_pic_url = url_for('static', filename=f'uploads/{profile_pic_filename}')
     
-    return render_template("student_dashboard.html", user=user, remaining_sessions=remaining_sessions, profile_pic=profile_pic_url)
+    return render_template("student_dashboard.html", user=user, remaining_sessions=remaining_sessions, lab_usage_points=lab_usage_points, profile_pic=profile_pic_url)
 
 @app.route("/student_dashboard")
 def student_dashboard():
@@ -542,6 +543,7 @@ def student_dashboard():
 
     session_record = SessionRecord.query.filter_by(user_id=session["user_id"]).first()
     remaining_sessions = session_record.remaining_sessions if session_record else 0
+    lab_usage_points = session_record.lab_usage_points if session_record else 0
 
     # Define the uploads folder path
     uploads_folder = os.path.join("static", "uploads")
@@ -557,7 +559,7 @@ def student_dashboard():
 
     profile_pic_url = url_for('static', filename=f'uploads/{profile_pic_filename}')
 
-    return render_template("student_dashboard.html", user=user, remaining_sessions=remaining_sessions, profile_pic=profile_pic_url)
+    return render_template("student_dashboard.html", user=user, remaining_sessions=remaining_sessions, lab_usage_points=lab_usage_points, profile_pic=profile_pic_url)
 
 @app.route('/static/<path:filename>')
 def serve_uploads(filename):
@@ -608,6 +610,7 @@ def edit_record():
         # 🔹 **Fix Remaining Sessions Disappearing**
         session_record = SessionRecord.query.filter_by(user_id=session["user_id"]).first()
         remaining_sessions = session_record.remaining_sessions if session_record else 0
+        lab_usage_points = session_record.lab_usage_points if session_record else 0
 
         # 🔹 **Fix Profile Picture Disappearing**
         uploads_folder = os.path.join("static", "uploads")
@@ -623,7 +626,7 @@ def edit_record():
         flash("Record updated successfully!", "success")
 
         # 🔹 **Return updated dashboard without pressing Home**
-        return render_template("student_dashboard.html", user=user, remaining_sessions=remaining_sessions, profile_pic=profile_pic_url)
+        return render_template("student_dashboard.html", user=user, remaining_sessions=remaining_sessions, lab_usage_points=lab_usage_points, profile_pic=profile_pic_url)
 
     return render_template("edit_record.html", user=user)
 

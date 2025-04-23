@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Student Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Custom styling for Points Earned */
+        .points-earned {
+            color: black;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     {% include 'header.html' %}
@@ -57,6 +64,7 @@
                 <p><strong>COURSE:</strong> {{ user.course }}</p>
                 <p><strong>YEAR LEVEL:</strong> {{ user.yearlevel }}</p>
                 <p><strong>REMAINING SESSION:</strong> {{ remaining_sessions }}</p>
+                <p><strong>POINTS EARNED:</strong> <span class="points-earned">{{ lab_usage_points }}</span></p>
                 <div class="profile-pic">
                     <img src="{{ profile_pic }}" alt="Profile Picture" class="student-profile">
                 </div>                
