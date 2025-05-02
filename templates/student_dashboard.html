@@ -11,6 +11,35 @@
             color: black;
             font-weight: bold;
         }
+        
+        /* Dashboard actions */
+        .dashboard-actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .dashboard-action-btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .dashboard-action-btn:hover {
+            background-color: #45a049;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            position: relative;
+            right: 0%;
+            left: -17%;
+            top: 20%;
+            gap: 15px; /* Adjust space between logos */
+        }
     </style>
 </head>
 <body>
@@ -76,7 +105,7 @@
         <div class="announcements">
             <h3>Announcements</h3>
             <div class="announcements-content" id="announcementsContent">
-                <!-- Announcements will be dynamically inserted here -->
+ 
             </div>
         </div>        
     </div>

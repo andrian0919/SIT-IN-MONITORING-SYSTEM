@@ -1,0 +1,4 @@
+lab_name,title,day_of_week,start_time,end_time,max_capacity,course,description
+524,Available,Monday,08:00,10:00,30,,Open lab hours
+544,Class in Session,TTH,10:00,12:00,40,CCS 229,Data Structures class
+Mac lab,Reserved,Friday,13:00,15:00,20,CCS 240,Database Systems lab

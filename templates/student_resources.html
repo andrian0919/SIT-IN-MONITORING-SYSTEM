@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Learning Resources</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .resources-wrapper {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .resources-header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .resources-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            justify-content: space-between;
+        }
+        
+        .resource-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: calc(33.33% - 20px);
+            margin-bottom: 25px;
+            box-sizing: border-box;
+            flex-grow: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 200px;
+        }
+        
+        /* Add margin to the right of every 3rd item to ensure proper alignment */
+        .resource-card:nth-child(3n) {
+            margin-right: 0;
+        }
+        
+        /* Responsive design adjustments */
+        @media (max-width: 1000px) {
+            .resource-card {
+                width: calc(50% - 15px);
+            }
+            
+            .resource-card:nth-child(3n) {
+                margin-right: inherit;
+            }
+            
+            .resource-card:nth-child(2n) {
+                margin-right: 0;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .resource-card {
+                width: 100%;
+                margin-right: 0;
+            }
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .resource-card h3 {
+            margin-top: 0;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        
+        .resource-desc {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+            flex-grow: 1;
+            line-height: 1.4;
+        }
+        
+        .resource-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        .resource-actions {
+            text-align: center;
+            margin-top: auto;
+        }
+        
+        .download-btn {
+            background-color: blue;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-block;
+            transition: background-color 0.2s, transform 0.1s;
+            font-weight: bold;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .download-btn:hover {
+            background-color: #45a049;
+            transform: scale(1.02);
+        }
+        
+        /* File type badges */
+        .file-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .file-pdf { background-color: #f44336; }
+        .file-doc, .file-docx { background-color: #2196F3; }
+        .file-xls, .file-xlsx { background-color: #4CAF50; }
+        .file-ppt, .file-pptx { background-color: #FF9800; }
+        .file-txt { background-color: #9E9E9E; }
+        .file-img { background-color: #9C27B0; }
+        .file-csv { background-color: #795548; }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 50px 30px;
+            color: #666;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 10px;
+            border: 1px dashed #ddd;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+            margin: 20px 0;
+        }
+        
+        .empty-state p {
+            font-size: 18px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            color: #555;
+        }
+        
+        .empty-state p:first-child {
+            font-weight: bold;
+            color: #333;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            position: relative;
+            right: 0%;
+            left: -17%;
+            top: 20%;
+            gap: 15px; /* Adjust space between logos */
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    
+    <div class="resources-wrapper">
+        <div class="resources-header">
+            <h2>Learning Resources</h2>
+            <p>Download materials shared by administrators</p>
+        </div>
+        
+        <div class="resources-container">
+            {% if resources %}
+                {% for resource in resources %}
+                <div class="resource-card">
+                    <h3>{{ resource.title }}</h3>
+                    <div class="resource-desc">{{ resource.description }}</div>
+                    <div class="resource-meta">
+                        <span>
+                            <span class="file-badge file-{{ resource.file_type }}">{{ resource.file_type }}</span>
+                        </span>
+                        <span>{{ resource.upload_date.strftime('%Y-%m-%d') }}</span>
+                    </div>
+                    <div class="resource-actions">
+                        <a href="{{ url_for('download_resource', resource_id=resource.id) }}" class="download-btn">Download</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>No resources available at the moment.</p>
+                    <p>Check back later for learning materials.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html> 

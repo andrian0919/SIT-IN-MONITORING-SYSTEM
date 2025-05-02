@@ -9,18 +9,27 @@
 <body>
     <style>
     .dropdown {
-    width: 57%; /* Adjust width to fit container */
-    max-width: 400px; /* Set maximum width */
-    padding: 9px;
-    font-size: 13px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-    cursor: pointer;
-}
-.form-group {
-    margin-bottom: 20px; /* Adds space between the two selections */
-}
+            width: 57%; /* Adjust width to fit container */
+            max-width: 400px; /* Set maximum width */
+            padding: 9px;
+            font-size: 13px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        .form-group {
+            margin-bottom: 20px; /* Adds space between the two selections */
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            position: relative;
+            right: 0%;
+            left: -17%;
+            top: 20%;
+            gap: 15px; /* Adjust space between logos */
+        }
     </style>
     {% include 'header.html' %}
     <div class="container">

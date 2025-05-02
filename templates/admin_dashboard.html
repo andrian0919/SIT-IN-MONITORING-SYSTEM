@@ -5,12 +5,82 @@
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: blue;
+            color: white;
+            padding: 15px 25px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            box-sizing: border-box;
+            z-index: 1000;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+            font-size: 24px;
+            white-space: nowrap;
+            flex: 0 0 auto;
+            margin-right: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            margin-left: auto;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: nowrap;
+            width: 70%;
+        }
+
+        .admin-home, .sit-in-reports-header, .reservation-header, .feedback-header, .announcement-header, .lab-schedules-header, .admin-logout, .resources-header {
+            text-decoration: none;
+            color: white;
+            padding: 8px 15px;
+            font-size: medium;
+            white-space: nowrap;
+            transition: background-color 0.2s;
+            border-radius: 4px;
+            position: relative;
+            left: 0;
+        }
+
+        .admin-home:hover, .sit-in-reports-header:hover, .reservation-header:hover, 
+        .feedback-header:hover, .announcement-header:hover, .lab-schedules-header:hover, .resources-header:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .admin-home {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .admin-logout {
+            background-color: #990000;
+            margin-left: -4%;
+        }
+        
+        .admin-logout:hover {
+            background-color: #cc0000;
+        }
+        
+        /* Add padding to body to account for fixed header */
+        body {
+            padding-top: 80px;
+        }
+
         .logo {
             display: flex;
             align-items: center;
             position: relative;
             right: 0%;
-            left: 15.4%;
+            left: -8%;
+            top: 20%;
             gap: 15px; /* Adjust space between logos */
         }
         .modal {
@@ -285,7 +355,7 @@
         border-radius: 5px;
         font-size: medium;
         position: relative;
-        left: 27.6%;
+        left: -4%;
         }
         .reservation-header {
             text-decoration: none;
@@ -295,7 +365,7 @@
             border-radius: 5px;
             font-size: medium;
             position: relative;
-            left: 11.3%;
+            left: -4%;
         }
 
         .sit-in-reports-header {
@@ -306,7 +376,7 @@
             border-radius: 5px;
             font-size: medium;
             position: relative;
-            left: 29.8%;
+            left: -4%;
         }
 
         .feedback-header {
@@ -317,7 +387,19 @@
             border-radius: 5px;
             font-size: medium;
             position: relative;
-            left: 11%;
+            left: -4%;
+        }
+
+        .lab-schedules-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: -4%;
+
         }
 
         .announcement-header {
@@ -328,7 +410,18 @@
             border-radius: 5px;
             font-size: medium;
             position: relative;
-            left: 5.5%;
+            left: -4%;
+        }
+
+        .resources-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+            left: -4%;
         }
 
         .statistics-summary {
@@ -499,12 +592,17 @@
         
         .leaderboard-table th:nth-child(4),
         .leaderboard-table td:nth-child(4) {
-            width: 20%;
+            width: 15%;
+        }
+        
+        .leaderboard-table th:nth-child(5),
+        .leaderboard-table td:nth-child(5) {
+            width: 12%;
         }
         
         .leaderboard-table th:last-child,
         .leaderboard-table td:last-child {
-            width: 15%;
+            width: 13%;
             font-weight: bold;
             color: #0000FF;
         }
@@ -577,6 +675,222 @@
             margin: 20px auto;
         }
         
+        /* Computer Control Styles */
+        .control-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .filter-controls {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+            font-size: 16px;
+        }
+        
+        .filter-controls label {
+            font-weight: bold;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        
+        .filter-controls select {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            min-width: 200px;
+            background-color: white;
+            color: #333;
+            -webkit-appearance: menulist;
+            appearance: menulist;
+        }
+        
+        .filter-controls .refresh-button {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            margin-left: 10px;
+            box-shadow: none;
+        }
+        
+        .filter-controls .refresh-button:hover {
+            background-color: #e0e0e0;
+            color: #333;
+            text-decoration: none;
+        }
+        
+        .filter-controls .refresh-button:active, 
+        .filter-controls .refresh-button:focus,
+        .filter-controls .refresh-button:visited {
+            background-color: #e0e0e0;
+            color: #333;
+            outline: none;
+            text-decoration: none;
+            box-shadow: none;
+        }
+        
+        .retry-button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .retry-button:hover {
+            background-color: #45a049;
+        }
+        
+        .pc-status-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: flex-start;
+        }
+        
+        .select-lab-message {
+            width: 100%;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 30px;
+        }
+        
+        .error-message {
+            color: red;
+            font-weight: bold;
+            font-style: normal;
+            margin-bottom: 10px;
+        }
+        
+        .pc-summary {
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            width: fit-content;
+        }
+        
+        .pc-item {
+            width: 120px;
+            height: 100px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .pc-available {
+            background-color: rgba(0, 128, 0, 0.1);
+            border: 2px solid green;
+            color: green;
+        }
+        
+        .pc-unavailable {
+            background-color: rgba(255, 0, 0, 0.1);
+            border: 2px solid red;
+            color: red;
+        }
+        
+        .pc-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .pc-status {
+            font-size: 12px;
+        }
+        
+        .pc-info {
+            display: none;
+            position: absolute;
+            bottom: -80px;
+            left: 0;
+            width: 200px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .pc-item:hover .pc-info {
+            display: block;
+        }
+        
+        /* Status Legend Styles */
+        .status-legend {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 30px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .legend-item:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .legend-item.active {
+            font-weight: bold;
+            background-color: #f0f0f0;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .legend-color.pc-available {
+            background-color: rgba(0, 128, 0, 0.1);
+            border: 2px solid green;
+        }
+        
+        .legend-color.pc-unavailable {
+            background-color: rgba(255, 0, 0, 0.1);
+            border: 2px solid red;
+        }
+        
+        .legend-text {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
         @media (max-width: 992px) {
             .statistics-layout-container {
                 flex-direction: column;
@@ -607,30 +921,32 @@
             text-align: center;
         }
 
-        .admin-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000; /* Higher z-index to ensure it stays on top */
-            background-color: #0000FF; /* Keep the blue background */
-            padding: 15px 0;
-        }
-        
-        /* Add padding to body to account for fixed header */
-        body {
-            padding-top: 150px; /* Adjust based on your header height */
-        }
-
         .trophy-icon {
             font-size: 22px;
             margin-left: 5px;
             vertical-align: middle;
         }
 
-        .end-session-btn {
-            background-color: red;
+        .end-session-btn, .end-with-points-btn {
+            padding: 8px 12px;
+            background-color: #007bff;
             color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 120px;
+            height: 40px;
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 24px;
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        .end-session-btn:hover, .end-with-points-btn:hover {
+            background-color: #0056b3;
         }
         
         .reset-session-btn {
@@ -649,22 +965,187 @@
         }
         
         /* Table styles */
+        .pc-status-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .pc-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* Dropdown styles */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-content {
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            right: 0;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .end-session-btn {
+            position: relative;
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            width: auto;
+            margin: 0 auto;
+            display: block;
+            white-space: nowrap;
+        }
+
+        .end-session-btn:hover {
+            background-color: #0056b3;
+        }
+        
+        .end-session-btn::after {
+            content: "";
+            display: none;
+        }
+
+        /* Button styles for modal actions */
+        .confirm-btn {
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .confirm-btn:hover {
+            background-color: #218838;
+        }
+
+        .cancel-btn {
+            padding: 8px 16px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .cancel-btn:hover {
+            background-color: #c82333;
+        }
+        
+        /* Modal styling improvements */
+        .modal-content h2 {
+            color: #007bff;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        .modal-content ul {
+            padding-left: 20px;
+        }
+        
+        .modal-content li {
+            margin-bottom: 5px;
+        }
+
+        /* Remove dropdown styles */
+        .action-buttons {
+            display: flex;
+            flex-direction: row !important;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+        }
+        
+        .end-session-btn {
+            padding: 8px 12px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 120px;
+            height: 40px;
+            line-height: normal;
+            vertical-align: middle;
+            white-space: nowrap;
+            text-align: center;
+            box-sizing: border-box;
+            display: inline-block;
+        }
+
+        .end-with-points-btn{
+                padding: 8px 12px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 120px;
+            height: 40px;
+            line-height: normal;
+            vertical-align: middle;
+            white-space: nowrap;
+            text-align: center;
+            box-sizing: border-box;
+            display: inline-block;
+        }
+
+        .end-session-btn:hover, .end-with-points-btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <div class="admin-header">
         <h1>ADMIN DASHBOARD</h1>
-        <div class="logo">
-            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="main-logo">
-            <img src="{{ url_for('static', filename='UC_logo.png') }}" alt="Logo" class="uc-logo">
-            <img src="{{ url_for('static', filename='PSITS_LOGO.png') }}" alt="Logo" class="psits-logo">
-        </div>
-        <a href="/admin_dashboard" class="admin-home">Home</a>
-        <a href="/sit_in_reports" class="sit-in-reports-header">Reports</a>
-        <a href="/Reservation_Actions" class="reservation-header">Reservations</a>
-        <a href="/feedback" class="feedback-header">Feedbacks</a>
-        <a href="/announcements" class="announcement-header">Announcements</a>
-        <a href="/logout" class="admin-logout">Logout</a>
+        <div class="nav-links">
+            <a href="/admin_dashboard" class="admin-home">Home</a>
+            <a href="/sit_in_reports" class="sit-in-reports-header">Reports</a>
+            <a href="/Reservation_Actions" class="reservation-header">Reservations</a>
+            <a href="{{ url_for('feedback') }}" class="feedback-header">Feedback</a>
+            <a href="{{ url_for('announcements') }}" class="announcement-header">Announcements</a>
+            <a href="{{ url_for('admin_lab_schedules') }}" class="lab-schedules-header">Lab Schedules</a>
+            <a href="{{ url_for('admin_resources') }}" class="resources-header">Resources</a>
+            <a href="/logout" class="admin-logout">Logout</a>
+        </div>    
     </div>
 
     <div class="admin-container">
@@ -683,6 +1164,7 @@
                 <option value="current_sit_in">Current Sit-in</option>
                 <option value="sit_in_record">Today's Sit-in Records</option>
                 <option value="statistics">Sit-in Records Statistics</option>
+                <option value="computer_control">Computer Control</option>
             </select>
         </div>
         
@@ -697,6 +1179,7 @@
                                 <th>Name</th>
                                 <th>Purpose</th>
                                 <th>Lab</th>
+                                <th>PC</th>
                                 <th>Status</th>
                                 <th>Remaining Sessions</th>
                                 <th>Action</th>
@@ -709,6 +1192,7 @@
                                 <td>{{ session.firstname }} {{ session.lastname }}</td>
                                 <td>{{ session.purpose }}</td>
                                 <td>{{ session.lab }}</td>
+                                <td>{{ session.available_pc }}</td>
                                 <td>{{ session.status }}</td>
                                 <td>{{ session.remaining_sessions }}</td>
                                 <td>
@@ -788,10 +1272,11 @@
                                 <th>Full Name</th>
                                 <th>Purpose</th>
                                 <th>Lab</th>
+                                <th>PC</th>
                                 <th>Time-in</th>
-                            <th>Status</th>
-                            <th>Remaining Sessions</th>
-                                <th>Action</th>
+                                <th>Status</th>
+                                <th>Remaining Sessions</th>
+                                <th style="width: 300px;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -801,11 +1286,15 @@
                                 <td>{{ sit_in.firstname }} {{ sit_in.lastname }}</td>
                                 <td>{{ sit_in.purpose }}</td>
                                 <td>{{ sit_in.lab }}</td>
+                                <td>{{ sit_in.available_pc }}</td>
                                 <td>{{ sit_in.time_in }}</td>
-                            <td>{{ sit_in.status }}</td>
-                            <td>{{ sit_in.remaining_sessions }}</td>
-                                <td>
-                                    <button class="end-session-btn" onclick="endSitInSession('{{ sit_in.id }}')">End Session</button>
+                                <td>{{ sit_in.status }}</td>
+                                <td>{{ sit_in.remaining_sessions }}</td>
+                                <td style="text-align: center; vertical-align: middle; padding: 10px 5px;">
+                                    <div style="display: flex; justify-content: center; gap: 10px;">
+                                        <button class="end-session-btn" onclick="endSitInSession('{{ sit_in.id }}', false)">End Session</button>
+                                        <button class="end-with-points-btn" onclick="endSitInSession('{{ sit_in.id }}', true)">End with Points</button>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -830,6 +1319,7 @@
                                 <th>Full Name</th>
                                 <th>Purpose</th>
                                 <th>Lab</th>
+                                <th>PC</th>
                                 <th>Time-in</th>
                                 <th>Time-out</th>
                                 <th>Date</th>
@@ -842,6 +1332,7 @@
                                 <td>{{ record.firstname }} {{ record.lastname }}</td>
                                 <td>{{ record.purpose }}</td>
                                 <td>{{ record.lab }}</td>
+                                <td>{{ record.available_pc }}</td>
                                 <td>{{ record.time_in }}</td>
                                 <td>{{ record.time_out }}</td>
                                 <td>{{ record.date }}</td>
@@ -913,6 +1404,7 @@
                                         <th>Name</th>
                                         <th>Course</th>
                                         <th>Sessions</th>
+                                        <th>Reward Points</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -923,12 +1415,63 @@
                                         <td>{{ student.name }}</td>
                                         <td>{{ student.course }}</td>
                                         <td>{{ student.sit_in_count }}</td>
+                                        <td>{{ student.reward_points }}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Computer Control View -->
+        <div id="computer-control-view" style="display: none;">
+            <h2>Computer Control</h2>
+            <div class="control-container">
+                <div class="filter-controls">
+                    <label for="lab-filter">Select Laboratory:</label>
+                    <select id="lab-filter">
+                        <option value="">Select a laboratory</option>
+                        {% if labs %}
+                            {% for lab in labs %}
+                                <option value="{{ lab.id }}">{{ lab.lab_name }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="1">524</option>
+                            <option value="2">544</option>
+                            <option value="3">523</option>
+                            <option value="4">526</option>
+                            <option value="5">Mac lab</option>
+                        {% endif %}
+                    </select>
+                    <a href="#" id="refresh-labs-btn" onclick="reloadLabs(); return false;" class="refresh-button">
+                        Refresh Labs
+                    </a>
+                </div>
+                
+                <div class="status-legend">
+                    <div class="legend-item" onclick="filterPcsByStatus('available')" style="cursor: pointer;">
+                        <div class="legend-color pc-available"></div>
+                        <div class="legend-text">Available (Click to filter)</div>
+                    </div>
+                    <div class="legend-item" onclick="filterPcsByStatus('unavailable')" style="cursor: pointer;">
+                        <div class="legend-color pc-unavailable"></div>
+                        <div class="legend-text">Reserved/In Use (Click to filter)</div>
+                    </div>
+                    <div class="legend-item" onclick="filterPcsByStatus('all')" style="cursor: pointer; margin-left: 20px;">
+                        <div class="legend-text" style="text-decoration: underline;">Show All</div>
+                    </div>
+                </div>
+                
+                <div id="pc-status-container" class="pc-status-container">
+                    <p class="select-lab-message">Please select a laboratory to view PC status</p>
+                </div>
+                
+                <div id="error-container" style="display: none; text-align: center; margin-top: 20px; color: red; background-color: #fee; padding: 10px; border-radius: 5px;">
+                    <p id="error-message" class="error-message"></p>
+                    <button id="retry-button" class="retry-button" onclick="loadPcStatus()">Try Again</button>
                 </div>
             </div>
         </div>
@@ -954,11 +1497,20 @@
                     <option value="C++">C++</option>
                     <option value="JavaScript">JavaScript</option>
                     <option value="PHP">PHP</option>
+                    <option value="Database">Database</option>
+                    <option value="Digital Logic & Design">Digital Logic & Design</option>
+                    <option value="Embedded System & IoT">Embdedded Systems & IoT</option>
+                    <option value="System Integration & Architecture">System Integration & Architecture</option>
+                    <option value="Computer Application">Computer Application</option>
+                    <option value="Project Management">Project Management</option>
+                    <option value="IT FRTRNDS">IT FRTRNDS</option>
+                    <option value="Technopreneurship">Technopreneurship</option>
+                    <option value="Capstone">Capstone</option>
                 </select>
                 <input type="text" id="purposeText" name="purposeText" style="display: none;" readonly>
     
                 <label for="lab">Laboratory:</label>
-                <select id="lab" name="lab">
+                <select id="lab" name="lab" onchange="loadAvailablePCs()">
                     <option value="">Select a laboratory</option>
                     <option value="524">524</option>
                     <option value="544">544</option>
@@ -967,6 +1519,12 @@
                     <option value="Mac lab">Mac lab</option>
                 </select>
                 <input type="text" id="labText" name="labText" style="display: none;" readonly>
+    
+                <label for="available_pc">PC:</label>
+                <select id="available_pc" name="available_pc">
+                    <option value="">Select a PC</option>
+                </select>
+                <input type="text" id="pcText" name="pcText" style="display: none;" readonly>
     
                 <label for="remainingSessions">Remaining Sessions:</label>
                 <input type="text" id="remainingSessions" name="remainingSessions" readonly>
@@ -1003,7 +1561,56 @@
         </div>
     </div>
 
+    <!-- End Sit-in With Points Modal -->
+    <div id="endWithPointsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEndWithPointsModal()">&times;</span>
+            <h2>End Sit-in Session with Points</h2>
+            <p>This action will:</p>
+            <ul>
+                <li>End the current sit-in session</li>
+                <li>Deduct one remaining session from the student's account</li>
+                <li>Add 1 point to the student's account</li>
+                <li>Automatically convert points to sessions if the student reaches 3 points</li>
+            </ul>
+            <p><strong>Note:</strong> 3 points = 1 sit-in session</p>
+            <form id="endWithPointsForm">
+                <input type="hidden" id="endWithPointsSitInId" name="sit_in_id">
+                
+                <div class="actions">
+                    <button type="button" class="confirm-btn" onclick="confirmEndWithPoints()">Confirm</button>
+                    <button type="button" class="cancel-btn" onclick="closeEndWithPointsModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the labs dropdown for PC status view
+            initializeLabs();
+            
+            // Rest of your initialization code
+            initializePagination();
+        });
+        
+        // Function to initialize labs dropdown
+        function initializeLabs() {
+            const labFilter = document.getElementById('lab-filter');
+            if (!labFilter) return;
+            
+            // Add event listener to dropdown changes
+            labFilter.addEventListener('change', loadPcStatus);
+            
+            // Log which labs are available in the dropdown
+            console.log('Available labs in dropdown:', 
+                Array.from(labFilter.options).map(option => ({ 
+                    value: option.value, 
+                    text: option.text 
+                }))
+            );
+        }
+
         // Pagination variables for each table
         const paginationState = {
             'studentTable': { currentPage: 1 },
@@ -1088,9 +1695,6 @@
             paginateTable('sitInRecordsTable');
         }
 
-        // Initialize pagination on page load
-        document.addEventListener("DOMContentLoaded", initializePagination);
-
         function searchTable() {
             let input = document.getElementById("searchInput").value.toLowerCase();
             let rows = document.querySelectorAll("table tr");
@@ -1160,9 +1764,12 @@
             const purposeText = document.getElementById("purposeText");
             const labSelect = document.getElementById("lab");
             const labText = document.getElementById("labText");
+            const pcSelect = document.getElementById("available_pc");
+            const pcText = document.getElementById("pcText");
+            const pcLabel = document.querySelector('label[for="available_pc"]');
 
             if (purpose && lab) {
-                // This is a student with reservation - show text fields with pre-filled values
+                // This is a student with reservation - show text fields with pre-filled values and hide PC selection
                 purposeSelect.style.display = "none";
                 purposeText.style.display = "block";
                 purposeText.value = purpose;
@@ -1170,6 +1777,11 @@
                 labSelect.style.display = "none";
                 labText.style.display = "block";
                 labText.value = lab;
+                
+                // Hide PC selection for reservations
+                pcSelect.style.display = "none";
+                pcText.style.display = "none";
+                pcLabel.style.display = "none";
             } else {
                 // This is from All Students - show select dropdowns
                 purposeSelect.style.display = "block";
@@ -1179,6 +1791,11 @@
                 labSelect.style.display = "block";
                 labText.style.display = "none";
                 labSelect.value = "";
+                
+                // Show PC selection for regular sit-ins
+                pcSelect.style.display = "block";
+                pcText.style.display = "none";
+                pcLabel.style.display = "block";
             }
 
             document.getElementById("sitInModal").style.display = "block";
@@ -1189,47 +1806,128 @@
         }
 
         function confirmSitIn() {
-            const studentId = document.getElementById("studentId").value;
-            const purpose = document.getElementById("purpose").style.display === "none" ? 
-                          document.getElementById("purposeText").value : 
-                          document.getElementById("purpose").value;
-            const lab = document.getElementById("lab").style.display === "none" ? 
-                       document.getElementById("labText").value : 
-                       document.getElementById("lab").value;
-
-            // Validate selections for non-reservation sit-ins
-            if (document.getElementById("purpose").style.display !== "none") {
-                if (!purpose) {
-                    alert("Please select a purpose");
+            const studentId = document.getElementById('studentId').value;
+            let purpose, lab, available_pc;
+            
+            // Check if purpose text field is visible (reservation case)
+            if (document.getElementById('purposeText').style.display === "block") {
+                purpose = document.getElementById('purposeText').value;
+                lab = document.getElementById('labText').value;
+                available_pc = ""; // No PC selection for reservations
+            } else {
+                purpose = document.getElementById('purpose').value;
+                lab = document.getElementById('lab').value;
+                available_pc = document.getElementById('available_pc').value;
+                
+                // Validate input for regular sit-ins
+                if (!purpose || !lab) {
+                    alert("Please select a purpose and laboratory.");
                     return;
                 }
-                if (!lab) {
-                    alert("Please select a laboratory");
-                    return;
+                
+                if (!available_pc) {
+                    // Make PC selection optional but confirm with the user
+                    if (!confirm("No PC selected. Continue with 'Not Assigned'?")) {
+                        return;
+                    }
                 }
             }
-
-            fetch('/sit_in/' + studentId, {
+            
+            fetch(`/sit_in/${studentId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrf_token')
                 },
                 body: JSON.stringify({
                     purpose: purpose,
-                    lab: lab
+                    lab: lab,
+                    available_pc: available_pc || "Not Assigned"
                 })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert("Student has been sat in.");
-                    location.reload();
+                    alert("Sit-in session started successfully!");
+                    window.location.reload();
                 } else {
-                    alert("Error: " + (data.error || "Failed to sit in student."));
+                    alert(`Error: ${data.error}`);
                 }
             })
             .catch(error => {
-                alert("Network error. Please try again.");
+                alert(`Error: ${error.message}`);
+            });
+            
+            closeSitInModal();
+        }
+
+        function loadAvailablePCs() {
+            const lab = document.getElementById('lab').value;
+            const pcSelect = document.getElementById('available_pc');
+            
+            // Clear existing options
+            pcSelect.innerHTML = '<option value="">Select a PC</option>';
+            
+            if (!lab) return;
+            
+            // Find the lab ID
+            let labId;
+            switch(lab) {
+                case '523': labId = 3; break;
+                case '524': labId = 1; break;
+                case '544': labId = 2; break;
+                case '526': labId = 4; break;
+                case 'Mac lab': labId = 5; break;
+                default: return;
+            }
+            
+            // Fetch available PCs for the selected lab
+            fetch(`/get_lab_pc_status?lab_id=${labId}`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': getCookie('csrf_token'),
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!Array.isArray(data)) {
+                    console.error('Expected array data but received:', typeof data);
+                    return;
+                }
+                
+                // Filter to only available PCs and sort by name
+                const availablePCs = data
+                    .filter(pc => pc.is_available)
+                    .sort((a, b) => {
+                        const nameA = a.pc_name.toUpperCase();
+                        const nameB = b.pc_name.toUpperCase();
+                        return nameA.localeCompare(nameB, undefined, {numeric: true});
+                    });
+                
+                // Add options for each available PC
+                availablePCs.forEach(pc => {
+                    const option = document.createElement('option');
+                    option.value = pc.pc_name;
+                    option.textContent = pc.pc_name;
+                    pcSelect.appendChild(option);
+                });
+                
+                // If no available PCs
+                if (availablePCs.length === 0) {
+                    const option = document.createElement('option');
+                    option.value = "Not Assigned";
+                    option.textContent = "No PCs Available - Not Assigned";
+                    pcSelect.appendChild(option);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching PC status:', error);
+                // Add a fallback option
+                const option = document.createElement('option');
+                option.value = "Not Assigned";
+                option.textContent = "Error loading PCs - Not Assigned";
+                pcSelect.appendChild(option);
             });
         }
 
@@ -1303,56 +2001,61 @@
         }
 
         function handleViewChange() {
-            const viewDropdown = document.getElementById('view-dropdown');
-            const selectedView = viewDropdown.value;
+            const selectedView = document.getElementById('view-dropdown').value;
             
-            // Hide all views
+            // Hide all views first
             document.getElementById('active-sessions-view').style.display = 'none';
             document.getElementById('all-students-view').style.display = 'none';
             document.getElementById('current-sit-in-view').style.display = 'none';
             document.getElementById('sit-in-records-view').style.display = 'none';
             document.getElementById('statistics-view').style.display = 'none';
             document.getElementById('student-statistics-view').style.display = 'none';
+            document.getElementById('computer-control-view').style.display = 'none';
             
             // Show selected view
             if (selectedView === 'active_sessions') {
                 document.getElementById('active-sessions-view').style.display = 'block';
-                paginateTable('studentTable');
             } else if (selectedView === 'all_students') {
                 document.getElementById('all-students-view').style.display = 'block';
-                paginateTable('allStudentsTable');
             } else if (selectedView === 'current_sit_in') {
                 document.getElementById('current-sit-in-view').style.display = 'block';
-                paginateTable('currentSitInTable');
             } else if (selectedView === 'sit_in_record') {
                 document.getElementById('sit-in-records-view').style.display = 'block';
-                paginateTable('sitInRecordsTable');
             } else if (selectedView === 'statistics') {
                 document.getElementById('statistics-view').style.display = 'block';
                 renderStatisticsCharts();
             } else if (selectedView === 'student_statistics') {
                 document.getElementById('student-statistics-view').style.display = 'block';
                 renderStudentStatistics();
+            } else if (selectedView === 'computer_control') {
+                document.getElementById('computer-control-view').style.display = 'block';
             }
         }
 
-        function endSitInSession(sitInId) {
-            if (confirm("Are you sure you want to end this sit-in session?")) {
-                fetch(`/end_sit_in/${sitInId}`, {
-                    method: 'POST'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert("Sit-in session ended.");
-                        location.reload();
-                    } else {
-                        alert("Error: " + (data.error || "Failed to end sit-in session."));
-                    }
-                })
-                .catch(error => {
-                    alert("Network error. Please try again.");
-                });
+        function endSitInSession(sitInId, withPoints) {
+            if (withPoints) {
+                // Open the modal for ending with points
+                document.getElementById('endWithPointsSitInId').value = sitInId;
+                document.getElementById('endWithPointsModal').style.display = 'block';
+            } else {
+                // Regular end session
+                if (confirm("Are you sure you want to end this sit-in session?")) {
+                    fetch(`/end_sit_in/${sitInId}`, {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Sit-in session ended.");
+                            location.reload();
+                        } else {
+                            alert("Error: " + (data.error || "Failed to end sit-in session."));
+                        }
+                    })
+                    .catch(error => {
+                        alert("Network error. Please try again.");
+                    });
+                }
             }
         }
 
@@ -1394,6 +2097,8 @@
                         title: {
                             display: true,
                             text: 'Purpose Distribution',
+                            position: 'top',
+                            align: 'center',
                             font: {
                                 size: 16,
                                 weight: 'bold'
@@ -1485,6 +2190,311 @@
                 }
             }
             return cookieValue;
+        }
+
+        // Function to load PC status for a selected lab
+        function loadPcStatus() {
+            const labFilter = document.getElementById('lab-filter');
+            const labId = labFilter ? labFilter.value : '';
+            const pcContainer = document.getElementById('pc-status-container');
+            const errorContainer = document.getElementById('error-container');
+            const errorMessage = document.getElementById('error-message');
+            
+            console.log('Load PC status triggered with lab ID:', labId);
+            
+            // Hide error container
+            if (errorContainer) errorContainer.style.display = 'none';
+            
+            if (!labId) {
+                if (pcContainer) pcContainer.innerHTML = '<p class="select-lab-message">Please select a laboratory to view PC status</p>';
+                return;
+            }
+            
+            // Show loading message
+            if (pcContainer) pcContainer.innerHTML = '<p class="select-lab-message">Loading PCs...</p>';
+            
+            // Debug output
+            console.log(`Fetching PC status for lab ID: ${labId}`);
+            
+            // Fetch available PCs for the selected lab
+            fetch(`/get_lab_pc_status?lab_id=${labId}`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': getCookie('csrf_token'),
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', 
+                    Array.from(response.headers.entries())
+                        .map(([key, value]) => `${key}: ${value}`)
+                        .join(', ')
+                );
+                
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        console.error('Error response text:', text);
+                        throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Received data:', data);
+                
+                if (!Array.isArray(data)) {
+                    console.error('Expected array data but received:', typeof data);
+                    if (data && data.error) {
+                        throw new Error(data.error);
+                    }
+                    pcContainer.innerHTML = '<p class="select-lab-message">Invalid data format received from server</p>';
+                    return;
+                }
+                
+                if (data.length === 0) {
+                    pcContainer.innerHTML = '<p class="select-lab-message">No PCs found for this laboratory</p>';
+                    return;
+                }
+                
+                // Clear container
+                pcContainer.innerHTML = '';
+                
+                // Create a grid container for PCs
+                const gridContainer = document.createElement('div');
+                gridContainer.className = 'pc-grid';
+                
+                // Sort PCs by name
+                data.sort((a, b) => {
+                    const nameA = a.pc_name.toUpperCase();
+                    const nameB = b.pc_name.toUpperCase();
+                    return nameA.localeCompare(nameB, undefined, {numeric: true});
+                });
+                
+                // Create PC items
+                data.forEach(pc => {
+                    const pcElement = document.createElement('div');
+                    pcElement.className = `pc-item ${pc.is_available ? 'pc-available' : 'pc-unavailable'}`;
+                    
+                    let statusText = pc.is_available ? 'Available' : 'Reserved';
+                    let reservationInfo = '';
+                    
+                    if (!pc.is_available && pc.reservation) {
+                        reservationInfo = `
+                            <div class="pc-info">
+                                <p><strong>Reserved by:</strong> ${pc.reservation.firstname} ${pc.reservation.lastname}</p>
+                                <p><strong>ID:</strong> ${pc.reservation.student_id}</p>
+                                <p><strong>Purpose:</strong> ${pc.reservation.purpose}</p>
+                                <p><strong>Date:</strong> ${pc.reservation.date}</p>
+                                <p><strong>Time:</strong> ${pc.reservation.time}</p>
+                                <p><strong>Status:</strong> ${pc.reservation.status}</p>
+                            </div>`;
+                    }
+                    
+                    pcElement.innerHTML = `
+                        <div class="pc-name">${pc.pc_name}</div>
+                        <div class="pc-status">${statusText}</div>
+                        ${reservationInfo}
+                    `;
+                    
+                    gridContainer.appendChild(pcElement);
+                });
+                
+                pcContainer.appendChild(gridContainer);
+                
+                // Add a PC count summary
+                const availableCount = data.filter(pc => pc.is_available).length;
+                const totalCount = data.length;
+                
+                const summaryElement = document.createElement('div');
+                summaryElement.className = 'pc-summary';
+                summaryElement.innerHTML = `
+                    <p>Available PCs: <strong>${availableCount}</strong> out of <strong>${totalCount}</strong></p>
+                `;
+                
+                pcContainer.appendChild(summaryElement);
+                
+                // Reset all filters when we load a new lab
+                filterPcsByStatus('all');
+            })
+            .catch(error => {
+                console.error('Error fetching PC status:', error);
+                pcContainer.innerHTML = '';
+                
+                // Show error container
+                if (errorContainer) {
+                    errorContainer.style.display = 'block';
+                    if (errorMessage) {
+                        errorMessage.textContent = `Error loading PCs: ${error.message || 'Unknown error'}`;
+                    }
+                }
+                
+                // Try to recover by reloading labs from the API
+                reloadLabs();
+            });
+        }
+
+        // Function to reload labs in case of error
+        function reloadLabs() {
+            console.log('Attempting to reload labs from API');
+            
+            // Show loading state
+            const refreshButton = document.getElementById('refresh-labs-btn');
+            const originalText = refreshButton.textContent;
+            refreshButton.textContent = 'Loading...';
+            refreshButton.style.backgroundColor = '#e0e0e0';
+            refreshButton.style.cursor = 'wait';
+            
+            fetch('/get_labs', {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': getCookie('csrf_token'),
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Reloaded labs data:', data);
+                
+                // Update the lab filter dropdown
+                const labFilter = document.getElementById('lab-filter');
+                if (labFilter && Array.isArray(data)) {
+                    // Keep the first option (Select a laboratory)
+                    const firstOption = labFilter.options[0];
+                    labFilter.innerHTML = '';
+                    labFilter.appendChild(firstOption);
+                    
+                    // Add the labs from the API
+                    data.forEach(lab => {
+                        const option = document.createElement('option');
+                        option.value = lab.id;
+                        option.textContent = lab.lab_name;
+                        labFilter.appendChild(option);
+                    });
+                }
+                
+                // Restore button state
+                refreshButton.textContent = originalText;
+                refreshButton.style.backgroundColor = '';
+                refreshButton.style.cursor = '';
+                
+                // Show success message
+                alert('Successfully refreshed labs list');
+            })
+            .catch(error => {
+                console.error('Failed to reload labs:', error);
+                
+                // Restore button state
+                refreshButton.textContent = originalText;
+                refreshButton.style.backgroundColor = '';
+                refreshButton.style.cursor = '';
+                
+                // Show error message
+                alert('Failed to reload labs: ' + error.message);
+            });
+        }
+
+        function closeEndWithPointsModal() {
+            document.getElementById('endWithPointsModal').style.display = 'none';
+        }
+
+        function confirmEndWithPoints() {
+            const sitInId = document.getElementById('endWithPointsSitInId').value;
+            
+            fetch(`/end_sit_in_with_points/${sitInId}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let successMessage = "Sit-in session ended successfully with points!\n\n";
+                    successMessage += `Updated values:\n`;
+                    successMessage += `- Remaining Sessions: ${data.remaining_sessions}\n`;
+                    successMessage += `- Lab Usage Points: ${data.lab_usage_points}`;
+                    
+                    alert(successMessage);
+                    closeEndWithPointsModal();
+                    location.reload();
+                } else {
+                    alert("Error: " + (data.error || "Failed to end sit-in session with points."));
+                }
+            })
+            .catch(error => {
+                alert("Network error. Please try again.");
+            });
+        }
+
+        // Function to filter PCs by status (available, unavailable, or all)
+        function filterPcsByStatus(status) {
+            console.log('Filtering PCs by status:', status);
+            
+            const pcItems = document.querySelectorAll('.pc-item');
+            if (pcItems.length === 0) {
+                console.log('No PC items found to filter');
+                return;
+            }
+            
+            // Reset active state on legend items
+            const legendItems = document.querySelectorAll('.legend-item');
+            legendItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Set active state on clicked legend item
+            const clickedLegend = document.querySelector(`.legend-item[onclick*="filterPcsByStatus('${status}')"]`);
+            if (clickedLegend) {
+                clickedLegend.classList.add('active');
+            }
+            
+            // Show/hide PC items based on status
+            pcItems.forEach(pcItem => {
+                if (status === 'all') {
+                    // Show all PCs
+                    pcItem.style.display = 'flex';
+                } else if (status === 'available' && pcItem.classList.contains('pc-available')) {
+                    // Show only available PCs
+                    pcItem.style.display = 'flex';
+                } else if (status === 'unavailable' && pcItem.classList.contains('pc-unavailable')) {
+                    // Show only unavailable PCs
+                    pcItem.style.display = 'flex';
+                } else {
+                    // Hide other PCs
+                    pcItem.style.display = 'none';
+                }
+            });
+            
+            // Update the PC count summary
+            updatePcSummary();
+        }
+        
+        // Function to update the PC count summary after filtering
+        function updatePcSummary() {
+            const pcItems = document.querySelectorAll('.pc-item');
+            const visiblePcItems = document.querySelectorAll('.pc-item[style*="display: flex"]');
+            const availablePcItems = document.querySelectorAll('.pc-item.pc-available[style*="display: flex"]');
+            
+            const summaryElement = document.querySelector('.pc-summary');
+            if (summaryElement) {
+                if (visiblePcItems.length < pcItems.length) {
+                    // We're filtering, so show filtered count
+                    summaryElement.innerHTML = `
+                        <p>Showing: <strong>${visiblePcItems.length}</strong> out of <strong>${pcItems.length}</strong> PCs</p>
+                        <p>Available: <strong>${availablePcItems.length}</strong> | Reserved: <strong>${visiblePcItems.length - availablePcItems.length}</strong></p>
+                    `;
+                } else {
+                    // All PCs are visible
+                    const availableCount = document.querySelectorAll('.pc-item.pc-available').length;
+                    const totalCount = pcItems.length;
+                    summaryElement.innerHTML = `
+                        <p>Available PCs: <strong>${availableCount}</strong> out of <strong>${totalCount}</strong></p>
+                    `;
+                }
+            }
         }
     </script>
     

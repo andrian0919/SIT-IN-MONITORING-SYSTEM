@@ -19,7 +19,7 @@ import tempfile
 import re
 import threading
 import time
-from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
@@ -535,13 +535,11 @@ def admin_dashboard():
             User.firstname,
             User.lastname,
             User.course,
-            func.count(Reservation.id).label("sit_in_count"),
-            SessionRecord.lab_usage_points
+            func.count(Reservation.id).label("sit_in_count")
         )
         .join(Reservation, User.student_id == Reservation.student_id)
-        .join(SessionRecord, SessionRecord.user_id == User.id)
         .filter(Reservation.status.in_(["Ended", "Archived", "Sit-in"]))
-        .group_by(User.student_id, User.firstname, User.lastname, User.course, SessionRecord.lab_usage_points)
+        .group_by(User.student_id, User.firstname, User.lastname, User.course)
         .order_by(func.count(Reservation.id).desc())
         .limit(5)
         .all()
@@ -553,8 +551,7 @@ def admin_dashboard():
             "student_id": s.student_id,
             "name": f"{s.firstname} {s.lastname}",
             "course": s.course,
-            "sit_in_count": s.sit_in_count,
-            "reward_points": s.lab_usage_points
+            "sit_in_count": s.sit_in_count
         } for s in top_students
     ]
 
@@ -1268,21 +1265,17 @@ def end_sit_in_with_points(sit_in_id):
     # Deduct one session when ending the sit-in
     if session_record.remaining_sessions > 0:
         session_record.remaining_sessions -= 1
-    
-    # Calculate sessions before adding point
-    sessions_before = session_record.lab_usage_points // 3
         
     # Add 1 point to lab_usage_points
     session_record.lab_usage_points += 1
     
-    # Calculate sessions after adding point
-    sessions_after = session_record.lab_usage_points // 3
-    
-    # Check if we have added enough points to gain a new session
-    sessions_to_add = sessions_after - sessions_before
+    # Check if we have enough points to convert to a session (3 points = 1 session)
+    sessions_to_add = session_record.lab_usage_points // 3
     if sessions_to_add > 0:
         # Add the converted sessions
         session_record.remaining_sessions += sessions_to_add
+        # Remove the used points (keep the remainder)
+        session_record.lab_usage_points %= 3
 
     # Free up the PC if it has been assigned
     if reservation.available_pc and reservation.available_pc != "Not Assigned":
@@ -1796,32 +1789,27 @@ def add_points():
         initial_points = session_record.lab_usage_points
         initial_sessions = session_record.remaining_sessions
             
-        # Calculate total sessions before adding points
-        sessions_before = initial_points // 3
-        
         # Add points to the user's record
         session_record.lab_usage_points += points
         
-        # Calculate total sessions after adding points
-        sessions_after = session_record.lab_usage_points // 3
-        
-        # Calculate how many new sessions to add
-        sessions_to_add = sessions_after - sessions_before
-        
+        # Convert points to sessions (3 points = 1 session)
+        sessions_to_add = session_record.lab_usage_points // 3
         if sessions_to_add > 0:
             # Add the converted sessions
             session_record.remaining_sessions += sessions_to_add
+            # Remove the used points (keep the remainder)
+            session_record.lab_usage_points %= 3
             
         db.session.commit()
         
         # Calculate the changes for reporting
-        points_added = points
+        points_change = session_record.lab_usage_points - initial_points + (sessions_to_add * 3)
         sessions_change = session_record.remaining_sessions - initial_sessions
         
         # Create a detailed message
         message = f"Added {points} points to student {student_id}."
         if sessions_change > 0:
-            message += f" Converted points into {sessions_change} new sit-in sessions."
+            message += f" Converted {sessions_change * 3} points into {sessions_change} new sit-in sessions."
         
         # For form submissions that expect a redirect, handle that differently
         if request.headers.get('Accept') == 'text/html':
@@ -1831,7 +1819,8 @@ def add_points():
         return jsonify({
             "success": True, 
             "message": message,
-            "points_added": points_added,
+            "points_added": points,
+            "points_converted": sessions_change * 3,
             "sessions_added": sessions_change,
             "remaining_points": session_record.lab_usage_points,
             "remaining_sessions": session_record.remaining_sessions

@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Lab Schedules</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: blue;
+            color: white;
+            padding: 15px 25px;
+            position: relative;
+            height: 60px;
+            box-sizing: border-box;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+            font-size: 24px;
+            white-space: nowrap;
+            flex: 0 0 auto;
+            margin-right: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            margin-left: auto;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: nowrap;
+            width: 72.2%;
+        }
+
+        .admin-home, .sit-in-reports-header, .reservation-header, .feedback-header, .announcement-header, .lab-schedules-header, .admin-logout {
+            text-decoration: none;
+            color: white;
+            padding: 8px 15px;
+            font-size: medium;
+            white-space: nowrap;
+            transition: background-color 0.2s;
+            border-radius: 4px;
+        }
+
+        .admin-home:hover, .sit-in-reports-header:hover, .reservation-header:hover, 
+        .feedback-header:hover, .announcement-header:hover, .lab-schedules-header:hover {
+            background-color: gray;
+        }
+
+        .lab-schedules-header {
+            background-color: rgba(10, 67, 209, 0.2);
+        }
+
+        .admin-logout {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 8px 15px;
+            font-size: medium;
+            white-space: nowrap;
+            transition: background-color 0.2s;
+            border-radius: 4px;
+            position: relative;
+            left: -1.9%;
+            margin-left: auto;
+        }
+        
+        .admin-logout:hover {
+            background-color: gray;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+
+        h2 {
+            margin-top: 0;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #003366;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #004c99;
+        }
+
+        .schedules-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .schedules-table th {
+            background-color: #f2f2f2;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .schedules-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .schedules-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-btn {
+            background-color: #4CAF50;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 60%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 90%;
+                margin: 20% auto;
+            }
+        }
+
+        .info-box {
+            background-color: #e8f4ff;
+            border-left: 4px solid #2196F3;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .info-box p {
+            margin: 0;
+            color: #333;
+        }
+
+        /* Admin header */
+        .admin-header {
+            background-color: blue;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+        }
+        
+        .admin-header h1 {
+            margin: 0;
+            color: white;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: #444;
+            overflow: hidden;
+        }
+        
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+        
+        .navbar a:hover {
+            background-color: #555;
+        }
+        
+        .navbar a.active {
+            background-color: #0066cc;
+        }
+        
+        .navbar a.back {
+            float: right;
+        }
+        
+        /* Import section */
+        .import-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .import-section h3 {
+            margin-top: 0;
+            color: #003366;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .file-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .import-result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #f5f5f5;
+        }
+        
+        .success-message {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .error-list {
+            margin-top: 10px;
+            padding-left: 20px;
+            color: #dc3545;
+        }
+        
+        .template-download {
+            display: inline-block;
+            margin-top: 10px;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        
+        .template-download:hover {
+            text-decoration: underline;
+        }
+        
+        .import-instructions {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        
+        .import-instructions h4 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .import-instructions ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
+        .resources-header {
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: medium;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>LAB SCHEDULES</h1>
+        <div class="nav-links">
+            <a href="/admin_dashboard" class="admin-home">Home</a>
+            <a href="/sit_in_reports" class="sit-in-reports-header">Reports</a>
+            <a href="/Reservation_Actions" class="reservation-header">Reservations</a>
+            <a href="/feedback" class="feedback-header">Feedbacks</a>
+            <a href="/announcements" class="announcement-header">Announcements</a>
+            <a href="/admin/lab_schedules" class="lab-schedules-header">Lab Schedules</a>
+            <a href="{{ url_for('admin_resources') }}" class="resources-header">Resources</a>
+            <a href="/logout" class="admin-logout">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2>Add New Lab Schedule</h2>
+            
+            <div class="info-box">
+                <p><strong>Note:</strong> When you select a multi-day schedule (like MWF), separate schedule entries will be created for each day, 
+                making them appear individually in the student view. This ensures students see an organized daily schedule.</p>
+                <p><strong>Student View:</strong> In the student view, "Availability Status" appears as "Status".</p>
+                <p><strong>Testing:</strong> You can view the student-facing schedules at <a href="/lab_schedules" target="_blank">/lab_schedules</a> or with <a href="/lab_schedules?demo=true" target="_blank">demo data</a>. 
+                If you're having trouble seeing schedules, try the <a href="/admin/create_test_schedule" target="_blank">schedule debugging tool</a> to create a test schedule automatically.</p>
+            </div>
+            
+            <!-- Add bulk upload section -->
+            <div class="import-section">
+                <h3>Bulk Upload Schedules</h3>
+                <p>Upload multiple schedules at once using a CSV or Excel file.</p>
+                
+                <form id="uploadSchedulesForm" enctype="multipart/form-data" onsubmit="return uploadSchedules(event)">
+                    <div class="file-input-wrapper">
+                        <label for="schedule_file">Select File:</label>
+                        <input type="file" id="schedule_file" name="schedule_file" accept=".csv, .xlsx, .xls" required>
+                        <button type="submit" class="file-upload-btn">Upload Schedules</button>
+                    </div>
+                </form>
+                
+                <div class="import-result" id="import-result" style="display: none;">
+                    <div class="import-status"></div>
+                    <div class="import-errors"></div>
+                </div>
+                
+                <div class="import-instructions">
+                    <h4>CSV/Excel Format Instructions</h4>
+                    <p>Your file must include these columns:</p>
+                    <ul>
+                        <li><strong>lab_name</strong>: Exact name of the lab (e.g., "524", "Mac lab")</li>
+                        <li><strong>title</strong>: Status like "Available", "Reserved", "Maintenance", "Class in Session"</li>
+                        <li><strong>day_of_week</strong>: Day format like "MWF", "TTH", "Monday", etc.</li>
+                        <li><strong>start_time</strong>: Start time in HH:MM format (e.g., "08:00")</li>
+                        <li><strong>end_time</strong>: End time in HH:MM format (e.g., "10:00")</li>
+                        <li><strong>description</strong>: Instructor name (e.g., "JENNIFER G. AMORES")</li>
+                        <li><strong>course</strong>: Subject (e.g., "Java", "C++")</li>
+                    </ul>
+                    <p><a href="#" id="download-template" class="template-download">Download CSV Template</a></p>
+                </div>
+            </div>
+            
+            <form id="addScheduleForm" onsubmit="return addSchedule(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="lab_id">Select Lab:</label>
+                        <select id="lab_id" name="lab_id" required>
+                            <option value="">Select Lab</option>
+                            {% for lab in labs %}
+                            <option value="{{ lab.id }}">{{ lab.lab_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">Availability Status:</label>
+                        <select id="title" name="title" required>
+                            <option value="">Select Status</option>
+                            <option value="Available">Available</option>
+                            <option value="Reserved">Reserved</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Class in Session">Class in Session</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="day_of_week">Day Schedule:</label>
+                        <select id="day_of_week" name="day_of_week" required>
+                            <option value="">Select Day Schedule</option>
+                            <option value="MWF">MWF (Monday-Wednesday-Friday)</option>
+                            <option value="TTH">TTH (Tuesday-Thursday)</option>
+                            <option value="FS">FS (Friday-Saturday)</option>
+                            <option value="Monday">Monday only</option>
+                            <option value="Tuesday">Tuesday only</option>
+                            <option value="Wednesday">Wednesday only</option>
+                            <option value="Thursday">Thursday only</option>
+                            <option value="Friday">Friday only</option>
+                            <option value="Saturday">Saturday only</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="start_time">Start Time:</label>
+                        <input type="time" id="start_time" name="start_time" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="end_time">End Time:</label>
+                        <input type="time" id="end_time" name="end_time" required>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="course">Subject:</label>
+                        <select id="course" name="course" required>
+                            <option value="">Select Subject</option>
+                            <option value="C#">C#</option>
+                            <option value="Java">Java</option>
+                            <option value="C">C</option>
+                            <option value="C++">C++</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="PHP">PHP</option>
+                            <option value="Database">Database</option>
+                            <option value="Digital Logic & Design">Digital Logic & Design</option>
+                            <option value="Embedded System & IoT">Embedded Systems & IoT</option>
+                            <option value="System Integration & Architecture">System Integration & Architecture</option>
+                            <option value="Computer Application">Computer Application</option>
+                            <option value="Project Management">Project Management</option>
+                            <option value="IT FRTRNDS">IT FRTRNDS</option>
+                            <option value="Technopreneurship">Technopreneurship</option>
+                            <option value="Capstone">Capstone</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Instructor:</label>
+                    <select id="description" name="description" required>
+                        <option value="">Select Instructor</option>
+                        <option value="JIA NOVA B. MONTECINO">JIA NOVA B. MONTECINO</option>
+                        <option value="JENNIFER G. AMORES">JENNIFER G. AMORES</option>
+                        <option value="LEO C. BERMUDEZ">LEO C. BERMUDEZ</option>
+                        <option value="DENNIS S. DURANO">DENNIS S. DURANO</option>
+                        <option value="WILSON GAYO">WILSON GAYO</option>
+                        <option value="JEFF SALIMBANGON">JEFF SALIMBANGON</option>
+                    </select>
+                </div>
+
+                <button type="submit">Add Schedule</button>
+            </form>
+        </div>
+
+        <div class="section">
+            <h2>Existing Lab Schedules</h2>
+            <table class="schedules-table">
+                <thead>
+                    <tr>
+                        <th>Lab</th>
+                        <th>Day Schedule</th>
+                        <th>Time</th>
+                        <th>Availability Status</th>
+                        <th>Subject</th>
+                        <th>Instructor</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for schedule in schedules %}
+                    <tr>
+                        {% for lab in labs %}
+                            {% if lab.id == schedule.lab_id %}
+                                <td>{{ lab.lab_name }}</td>
+                            {% endif %}
+                        {% endfor %}
+                        <td>{{ schedule.day_of_week }}</td>
+                        <td>{{ schedule.start_time }} - {{ schedule.end_time }}</td>
+                        <td>{{ schedule.title }}</td>
+                        <td>{{ schedule.course }}</td>
+                        <td>{{ schedule.description }}</td>
+                        <td class="actions">
+                            <button class="edit-btn" onclick="openEditModal('{{ schedule.id }}')">Edit</button>
+                            <button class="delete-btn" onclick="deleteSchedule('{{ schedule.id }}')">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>Edit Lab Schedule</h2>
+            <form id="editScheduleForm" onsubmit="return updateSchedule(event)">
+                <input type="hidden" id="edit_schedule_id">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="edit_lab_id">Select Lab:</label>
+                        <select id="edit_lab_id" name="lab_id" required>
+                            <option value="">Select Lab</option>
+                            {% for lab in labs %}
+                            <option value="{{ lab.id }}">{{ lab.lab_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_title">Availability Status:</label>
+                        <select id="edit_title" name="title" required>
+                            <option value="">Select Status</option>
+                            <option value="Available">Available</option>
+                            <option value="Reserved">Reserved</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Class in Session">Class in Session</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_day_of_week">Day Schedule:</label>
+                        <select id="edit_day_of_week" name="day_of_week" required>
+                            <option value="">Select Day Schedule</option>
+                            <option value="MWF">MWF (Monday-Wednesday-Friday)</option>
+                            <option value="TTH">TTH (Tuesday-Thursday)</option>
+                            <option value="FS">FS (Friday-Saturday)</option>
+                            <option value="Monday">Monday only</option>
+                            <option value="Tuesday">Tuesday only</option>
+                            <option value="Wednesday">Wednesday only</option>
+                            <option value="Thursday">Thursday only</option>
+                            <option value="Friday">Friday only</option>
+                            <option value="Saturday">Saturday only</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_start_time">Start Time:</label>
+                        <input type="time" id="edit_start_time" name="start_time" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_end_time">End Time:</label>
+                        <input type="time" id="edit_end_time" name="end_time" required>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="edit_course">Subject:</label>
+                        <select id="edit_course" name="course" required>
+                            <option value="">Select Subject</option>
+                            <option value="C#">C#</option>
+                            <option value="Java">Java</option>
+                            <option value="C">C</option>
+                            <option value="C++">C++</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="PHP">PHP</option>
+                            <option value="Database">Database</option>
+                            <option value="Digital Logic & Design">Digital Logic & Design</option>
+                            <option value="Embedded System & IoT">Embedded Systems & IoT</option>
+                            <option value="System Integration & Architecture">System Integration & Architecture</option>
+                            <option value="Computer Application">Computer Application</option>
+                            <option value="Project Management">Project Management</option>
+                            <option value="IT FRTRNDS">IT FRTRNDS</option>
+                            <option value="Technopreneurship">Technopreneurship</option>
+                            <option value="Capstone">Capstone</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_description">Instructor:</label>
+                    <select id="edit_description" name="description" required>
+                        <option value="">Select Instructor</option>
+                        <option value="JIA NOVA B. MONTECINO">JIA NOVA B. MONTECINO</option>
+                        <option value="JENNIFER G. AMORES">JENNIFER G. AMORES</option>
+                        <option value="LEO C. BERMUDEZ">LEO C. BERMUDEZ</option>
+                        <option value="DENNIS S. DURANO">DENNIS S. DURANO</option>
+                        <option value="WILSON GAYO">WILSON GAYO</option>
+                        <option value="JEFF SALIMBANGON">JEFF SALIMBANGON</option>
+                    </select>
+                </div>
+
+                <button type="submit">Update Schedule</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Add Schedule
+        function addSchedule(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(document.getElementById('addScheduleForm'));
+            
+            fetch('/admin/add_lab_schedule', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Schedule added successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+            
+            return false;
+        }
+        
+        // Open Edit Modal
+        function openEditModal(scheduleId) {
+            // Convert scheduleId to number if it's a string
+            scheduleId = parseInt(scheduleId);
+            
+            // Get schedule data - we'll do this by finding the row in the table
+            const table = document.querySelector('.schedules-table');
+            const rows = table.querySelectorAll('tbody tr');
+            
+            let scheduleData = null;
+            
+            rows.forEach(row => {
+                const editBtn = row.querySelector('.edit-btn');
+                if (editBtn && editBtn.getAttribute('onclick').includes(scheduleId)) {
+                    // This is our row
+                    const cells = row.querySelectorAll('td');
+                    
+                    // Find lab_id based on lab name
+                    const labName = cells[0].textContent.trim();
+                    const labSelect = document.getElementById('edit_lab_id');
+                    const labOptions = labSelect.querySelectorAll('option');
+                    let labId = '';
+                    
+                    for (const option of labOptions) {
+                        if (option.textContent === labName) {
+                            labId = option.value;
+                            break;
+                        }
+                    }
+                    
+                    // Parse the time
+                    const timeRange = cells[2].textContent.trim();
+                    const [startTime, endTime] = timeRange.split(' - ');
+                    
+                    // Extract status and instructor
+                    const status = cells[3].textContent.trim();
+                    const course = cells[4].textContent.trim();
+                    const instructor = cells[5].textContent.trim();
+                    
+                    scheduleData = {
+                        id: scheduleId,
+                        lab_id: labId,
+                        day_of_week: cells[1].textContent.trim(),
+                        start_time: startTime,
+                        end_time: endTime,
+                        title: status,
+                        description: instructor,
+                        course: course
+                    };
+                }
+            });
+            
+            if (scheduleData) {
+                // Fill the edit form
+                document.getElementById('edit_schedule_id').value = scheduleData.id;
+                document.getElementById('edit_lab_id').value = scheduleData.lab_id;
+                document.getElementById('edit_title').value = scheduleData.title;
+                document.getElementById('edit_day_of_week').value = scheduleData.day_of_week;
+                document.getElementById('edit_start_time').value = scheduleData.start_time;
+                document.getElementById('edit_end_time').value = scheduleData.end_time;
+                document.getElementById('edit_course').value = scheduleData.course || '';
+                document.getElementById('edit_description').value = scheduleData.description || '';
+                
+                // Show the modal
+                document.getElementById('editModal').style.display = 'block';
+            }
+        }
+        
+        // Close Edit Modal
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+        
+        // Update Schedule
+        function updateSchedule(event) {
+            event.preventDefault();
+            
+            const scheduleId = document.getElementById('edit_schedule_id').value;
+            const formData = new FormData(document.getElementById('editScheduleForm'));
+            
+            fetch(`/admin/edit_lab_schedule/${scheduleId}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Schedule updated successfully!');
+                    closeEditModal();
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+            
+            return false;
+        }
+        
+        // Delete Schedule
+        function deleteSchedule(scheduleId) {
+            if (confirm('Are you sure you want to delete this schedule?')) {
+                fetch(`/admin/delete_lab_schedule/${scheduleId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Schedule deleted successfully!');
+                        window.location.reload();
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+            }
+        }
+        
+        // When the window is clicked
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target == modal) {
+                closeEditModal();
+            }
+        }
+
+        // Upload Schedules in Bulk
+        function uploadSchedules(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(document.getElementById('uploadSchedulesForm'));
+            const resultDiv = document.getElementById('import-result');
+            const statusDiv = resultDiv.querySelector('.import-status');
+            const errorsDiv = resultDiv.querySelector('.import-errors');
+            
+            // Show loading state
+            resultDiv.style.display = 'block';
+            statusDiv.innerHTML = '<p><em>Uploading and processing file...</em></p>';
+            errorsDiv.innerHTML = '';
+            
+            fetch('/admin/upload_lab_schedules', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    statusDiv.innerHTML = `<p class="success-message">${data.message}</p>`;
+                    
+                    // Show errors if any
+                    if (data.errors && data.errors.length > 0) {
+                        errorsDiv.innerHTML = '<h4>Errors:</h4><ul class="error-list">';
+                        data.errors.forEach(error => {
+                            errorsDiv.innerHTML += `<li>${error}</li>`;
+                        });
+                        errorsDiv.innerHTML += '</ul>';
+                    } else {
+                        // No errors, reload page after a delay
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    }
+                } else {
+                    statusDiv.innerHTML = `<p class="error-message">Error: ${data.error}</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                statusDiv.innerHTML = `<p class="error-message">An error occurred. Please try again.</p>`;
+            });
+            
+            return false;
+        }
+        
+        // Generate and download CSV template
+        document.addEventListener('DOMContentLoaded', function() {
+            const downloadLink = document.getElementById('download-template');
+            if (downloadLink) {
+                downloadLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const csvContent = [
+                        'lab_name,title,day_of_week,start_time,end_time,course,description',
+                        '524,Available,Monday,08:00,10:00,Java,JIA NOVA B. MONTECINO',
+                        '544,Class in Session,TTH,10:00,12:00,C#,JENNIFER G. AMORES',
+                        'Mac lab,Reserved,Friday,13:00,15:00,Database,LEO C. BERMUDEZ'
+                    ].join('\n');
+                    
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    
+                    const tempLink = document.createElement('a');
+                    tempLink.href = url;
+                    tempLink.setAttribute('download', 'lab_schedules_template.csv');
+                    tempLink.click();
+                    
+                    URL.revokeObjectURL(url);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

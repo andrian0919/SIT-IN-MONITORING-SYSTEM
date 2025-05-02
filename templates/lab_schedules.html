@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lab Schedules</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Auto-refresh the page every 5 minutes (300000 ms) to show updated schedules -->
+    <meta http-equiv="refresh" content="300">
+    <style>
+        body {
+            background-image: none;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 80px; /* Increased from 30px to 80px to provide more space below the header */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+
+        .main-content {
+            width: 100%;
+            height: calc(100vh - 100px); /* Viewport height minus header and some margin */
+            overflow-y: auto; /* Enable vertical scrolling */
+            padding-bottom: 20px; /* Add padding at the bottom */
+            position: relative; /* Enable positioned elements inside */
+        }
+
+        .schedules-wrapper {
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 5px auto;
+            padding: 0 15px;
+        }
+
+        .schedules-wrapper h2 {
+            text-align: center;
+            color: #003366;
+            margin-bottom: 1px; /* Reduced from 2px to 1px */
+            font-size: 22px; /* Reduced from 24px to 22px */
+        }
+
+        .schedules-wrapper p {
+            text-align: center;
+            margin-bottom: 1px; /* Reduced from 2px to 1px */
+            font-size: 13px; /* Reduced from 14px to 13px */
+            color: #555;
+        }
+
+        .schedules-wrapper .updated-info {
+            text-align: center;
+            font-size: 11px; /* Reduced from 12px to 11px */
+            color: #666;
+            margin-bottom: 3px; /* Reduced from 5px to 3px */
+            font-style: italic;
+        }
+
+        .labs-grid {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .grid-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px; /* Reduced from 5px to 3px */
+            width: 100%;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        
+        .lab-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            margin-bottom: 1px; /* Reduced from 2px to 1px */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); /* Further reduced shadow */
+            border-radius: 3px; /* Reduced from 5px to 3px */
+        }
+
+        .lab-header {
+            background-color: blue; /* Changed from #003366 to blue to match admin header */
+            color: white;
+            padding: 5px 8px;
+            margin: 0;
+            font-size: 1rem;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #0000cc; /* Adjusted border color */
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+        }
+
+        .lab-section {
+            margin-bottom: 0;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e0e0e0;
+        }
+        
+        /* Table container */
+        .table-container {
+            overflow-x: auto;
+            width: 100%;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .lab-title {
+            background-color: #003366;
+            color: white;
+            padding: 15px 20px;
+            margin: 0;
+            font-size: 1.3rem;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            border-bottom: 3px solid #001a33;
+        }
+
+        .schedules-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .schedules-table th {
+            background-color: #f2f2f2;
+            padding: 4px 8px; /* Reduced from 6px 10px to 4px 8px */
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+            color: #444;
+            font-size: 12px; /* Added smaller font */
+        }
+
+        .schedules-table td {
+            padding: 3px 8px; /* Reduced from 6px 10px to 3px 8px */
+            border-bottom: 1px solid #ddd;
+            color: #333;
+            font-size: 12px; /* Added smaller font */
+        }
+
+        .schedules-table tr:nth-child(even):not(.day-label) {
+            background-color: #f9f9f9;
+        }
+
+        .schedules-table tr:hover:not(.day-label) {
+            background-color: #f0f7ff;
+        }
+        
+        /* Column widths */
+        .schedules-table th:nth-child(1), 
+        .schedules-table td:nth-child(1) { /* Time column */
+            width: 25%;
+            min-width: 100px;
+        }
+        
+        .schedules-table th:nth-child(2), 
+        .schedules-table td:nth-child(2) { /* Status column */
+            width: 15%;
+            min-width: 90px;
+        }
+        
+        .schedules-table th:nth-child(3), 
+        .schedules-table td:nth-child(3) { /* Capacity column */
+            width: 15%;
+            min-width: 80px;
+        }
+        
+        .schedules-table th:nth-child(4), 
+        .schedules-table td:nth-child(4) { /* Course column */
+            width: 15%;
+            min-width: 80px;
+        }
+        
+        .schedules-table th:nth-child(5), 
+        .schedules-table td:nth-child(5) { /* Notes column */
+            width: 30%;
+            min-width: 100px;
+        }
+
+        .no-schedules {
+            padding: 3px; /* Reduced from 5px to 3px */
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            font-size: 12px; /* Reduced from 14px to 12px */
+        }
+
+        .day-label {
+            font-weight: bold;
+            background-color: #e6f2ff; /* Light blue background for day labels */
+        }
+
+        .day-label td {
+            padding: 2px 8px;
+            font-size: 12px;
+            color: blue; /* Changed from #0056b3 to blue */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .error-message {
+            background-color: #ffe0e0;
+            border: 1px solid #ff7070;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #d00000;
+        }
+        
+        .refresh-notice {
+            text-align: center;
+            font-size: 11px; /* Reduced from 12px to 11px */
+            color: #666;
+            margin-top: 10px; /* Reduced from 30px to 10px */
+            font-style: italic;
+        }
+        
+        .manual-refresh {
+            background-color: blue; /* Changed from #003366 to blue */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: block;
+            margin: 3px auto 10px;
+            font-size: 12px;
+        }
+        
+        .manual-refresh:hover {
+            background-color: #0000cc; /* Slightly lighter blue for hover */
+        }
+
+        .status-available {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .status-reserved {
+            color: #f57c00;
+            font-weight: bold;
+        }
+
+        .status-maintenance {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        .status-class {
+            color: #1976d2;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 45px; /* Adjust for smaller header on mobile */
+            }
+            
+            .grid-wrapper {
+                display: grid;
+                grid-template-columns: 1fr !important;
+                grid-template-areas: 
+                    "lab523"
+                    "lab524"
+                    "lab526"
+                    "lab544"
+                    "maclab" !important;
+                gap: 15px;
+            }
+            
+            .lab-container {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+            
+            .schedules-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .schedules-wrapper {
+                padding: 0 15px;
+                margin: 20px auto;
+            }
+
+            .schedules-table th, 
+            .schedules-table td {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Added debug styles */
+        .debug-box {
+            background-color: #f0f7ff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        /* Loading indicator */
+        .loading {
+            display: none; /* Start hidden, will be shown via JS */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid blue; /* Changed from #003366 to blue */
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 5px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .retry-btn {
+            background-color: blue; /* Changed from #003366 to blue */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            display: inline-block;
+        }
+        
+        .retry-btn:hover {
+            background-color: #0000cc; /* Slightly lighter blue for hover */
+        }
+
+        /* Reduce height of all table rows */
+        .schedules-table tr {
+            line-height: 0.9; /* Reduced from 1 to 0.9 */
+            height: auto; /* Ensure height is auto to accommodate content */
+        }
+
+        /* Custom scrollbar styling for better visibility */
+        .main-content::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background: blue; /* Changed from #003366 to blue to match admin header */
+            border-radius: 10px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: #0000cc; /* Slightly lighter blue for hover */
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            position: relative;
+            right: 0%;
+            left: -17%;
+            top: 20%;
+            gap: 15px; /* Adjust space between logos */
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+
+    <div class="main-content">
+    <div class="schedules-wrapper">
+        <h2>Lab Schedules</h2>
+        <p>Below are the current schedules for all computer laboratories.</p>
+        
+        <div class="updated-info">
+                Last updated: <span id="last-updated">{{ now.strftime('%B %d, %Y at %I:%M %p') if now else 'Unknown' }}</span>
+            </div>
+            
+            <!-- Loading indicator -->
+            <div id="loading-indicator" class="loading">
+                <div class="spinner"></div>
+                <p>Loading schedules...</p>
+            </div>
+            
+            <!-- Error message container -->
+            <div id="error-container" class="error-message" style="display: none;">
+                <p>Failed to load schedules. <button id="retry-button" class="retry-btn">Retry</button></p>
+        </div>
+            
+            {% if error_message %}
+            <div class="error-message">
+                <p>{{ error_message }}</p>
+            </div>
+            {% endif %}
+        
+        <!-- Extra debugging information for admins -->
+        {% if request.args.get('debug', 'false').lower() == 'true' %}
+        <div style="background: #e6f7ff; padding: 10px; margin-bottom: 15px; border: 1px solid #aae; border-radius: 5px;">
+            <details>
+                <summary><strong>Debug Information for Admins</strong> (click to expand)</summary>
+                <p>This information is only visible when '?debug=true' is added to the URL.</p>
+                <p>Current time: {{ now }}</p>
+                    <div id="debug-info-container">
+                        <!-- Debug info will be loaded here -->
+                    </div>
+            </details>
+        </div>
+            {% endif %}
+            
+            <!-- Labs Container - Data will be loaded here via AJAX -->
+            <div id="labs-container" class="labs-grid">
+                <!-- Lab schedules will be inserted here via JavaScript -->
+        </div>
+        
+            <!-- No schedules message -->
+            <div id="no-schedules-message" style="display: none;" class="error-message">
+                <p>No schedules are available at this time.</p>
+                {% if session and session.get('role') == 'admin' %}
+                <p>To add schedules, go to the <a href="/admin/lab_schedules" target="_blank">admin schedules page</a>.</p>
+                {% endif %}
+            </div>
+
+            <div class="refresh-notice">
+                <p>This page automatically refreshes every 5 minutes.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lab schedules data loading via AJAX
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLabSchedules();
+            
+            // Set up retry button
+            document.getElementById('retry-button').addEventListener('click', function() {
+                loadLabSchedules();
+            });
+        });
+        
+        function loadLabSchedules() {
+            // Show loading indicator
+            document.getElementById('loading-indicator').style.display = 'flex';
+            document.getElementById('error-container').style.display = 'none';
+            document.getElementById('no-schedules-message').style.display = 'none';
+            document.getElementById('labs-container').innerHTML = '';
+            
+            // Construct the API URL with cache-busting parameter
+            let apiUrl = `/api/lab_schedules?t=${Date.now()}`;
+            
+            // Create an AbortController for timeout handling
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+            
+            // Fetch the schedules from the API with timeout
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                },
+                signal: controller.signal
+            })
+            .then(response => {
+                clearTimeout(timeoutId);
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to load schedules');
+                }
+                
+                // Update last updated time
+                const timestamp = new Date(data.timestamp);
+                document.getElementById('last-updated').textContent = 
+                    timestamp.toLocaleDateString('en-US', { 
+                        month: 'long', 
+                        day: 'numeric', 
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric'
+                    });
+                
+                // Ensure we have consistent lab names
+                const standardizedLabSchedules = standardizeLabNames(data.lab_schedules);
+                
+                // Add debug info if in debug mode
+                if (document.getElementById('debug-info-container')) {
+                    const debugInfo = document.getElementById('debug-info-container');
+                    debugInfo.innerHTML = `
+                        <p>Data source: ${data.cached ? 'Cache' : 'Database'}</p>
+                        <p>Timestamp: ${new Date().toISOString()}</p>
+                        <p>Total labs: ${Object.keys(standardizedLabSchedules).length}</p>
+                        <p>Available labs: ${Object.keys(standardizedLabSchedules).join(', ')}</p>
+                        <pre>${JSON.stringify(standardizedLabSchedules, null, 2)}</pre>
+                    `;
+                }
+                
+                // Process and display the lab schedules
+                displayLabSchedules(standardizedLabSchedules);
+            })
+            .catch(error => {
+                clearTimeout(timeoutId);
+                console.error('Error loading schedules:', error);
+                document.getElementById('error-container').style.display = 'block';
+                
+                let errorMessage = 'Failed to load schedules. ';
+                if (error.name === 'AbortError') {
+                    errorMessage = 'Request timed out after 10 seconds. ';
+                } else if (error.message) {
+                    errorMessage = `Failed to load schedules: ${error.message}. `;
+                }
+                
+                document.getElementById('error-container').querySelector('p').textContent = errorMessage;
+                document.getElementById('error-container').appendChild(document.getElementById('retry-button'));
+                
+                // Show no-schedules message as fallback
+                document.getElementById('no-schedules-message').style.display = 'block';
+            })
+            .finally(() => {
+                document.getElementById('loading-indicator').style.display = 'none';
+            });
+        }
+        
+        // Helper function to standardize lab names
+        function standardizeLabNames(labSchedules) {
+            if (!labSchedules) {
+                console.warn('Lab schedules data is undefined or null');
+                return {
+                    '523': [],
+                    '524': [],
+                    '526': [],
+                    '544': [],
+                    'Mac lab': []
+                };
+            }
+            
+            const standardizedSchedules = {};
+            
+            // Ensure all required labs exist with empty arrays
+            standardizedSchedules['523'] = [];
+            standardizedSchedules['524'] = [];
+            standardizedSchedules['526'] = [];
+            standardizedSchedules['544'] = [];
+            standardizedSchedules['Mac lab'] = [];
+            
+            // Normalize lab names (handle variations in capitalization, spaces, etc.)
+            Object.keys(labSchedules).forEach(labName => {
+                // Normalize the lab name to handle variations
+                let normalizedName = labName.trim();
+                
+                // Handle common variations
+                if (/^lab\s*523$/i.test(normalizedName)) normalizedName = '523';
+                else if (/^lab\s*524$/i.test(normalizedName)) normalizedName = '524';
+                else if (/^lab\s*526$/i.test(normalizedName)) normalizedName = '526';
+                else if (/^lab\s*544$/i.test(normalizedName)) normalizedName = '544';
+                else if (/^mac\s*laboratory$/i.test(normalizedName)) normalizedName = 'Mac lab';
+                else if (/^mac\s*lab$/i.test(normalizedName)) normalizedName = 'Mac lab';
+                
+                // Add to normalized structure
+                if (standardizedSchedules[normalizedName]) {
+                    // Append to existing lab array if it already exists
+                    standardizedSchedules[normalizedName] = labSchedules[labName] || [];
+                } else {
+                    // If this is a lab we didn't initialize, add it
+                    standardizedSchedules[normalizedName] = labSchedules[labName] || [];
+                }
+                
+                console.log(`Processed lab "${labName}" as "${normalizedName}" with ${standardizedSchedules[normalizedName].length} schedules`);
+            });
+            
+            // Debugging output to console
+            console.log('Standardized lab schedules:', Object.keys(standardizedSchedules));
+            Object.keys(standardizedSchedules).forEach(lab => {
+                console.log(`${lab}: ${standardizedSchedules[lab].length} schedules`);
+            });
+            
+            return standardizedSchedules;
+        }
+        
+        function displayLabSchedules(labSchedules) {
+            const labsContainer = document.getElementById('labs-container');
+            labsContainer.innerHTML = '';
+            
+            // Clear any previous layout
+            document.querySelectorAll('.mac-lab-container').forEach(el => el.remove());
+            
+            // Check if we have any schedules
+            const labNames = Object.keys(labSchedules);
+            if (labNames.length === 0) {
+                document.getElementById('no-schedules-message').style.display = 'block';
+                return;
+            }
+            
+            // Create a wrapper div to ensure proper spacing
+            const gridWrapper = document.createElement('div');
+            gridWrapper.className = 'grid-wrapper';
+            gridWrapper.style.width = '100%';
+            gridWrapper.style.marginBottom = '10px';
+            
+            // Create a custom grid layout
+            gridWrapper.style.display = 'grid';
+            gridWrapper.style.gridTemplateColumns = '1fr 1fr';
+            gridWrapper.style.gridTemplateRows = 'auto auto auto';
+            gridWrapper.style.gridTemplateAreas = 
+                '"lab523 lab524" ' +
+                '"lab526 lab544" ' +
+                '"maclab maclab"';
+            gridWrapper.style.gap = '35px';
+            
+            // Create containers for each lab with specific grid areas
+            const labPositions = {
+                '523': { area: 'lab523', name: 'Laboratory 523' },
+                '524': { area: 'lab524', name: 'Laboratory 524' },
+                '526': { area: 'lab526', name: 'Laboratory 526' },
+                '544': { area: 'lab544', name: 'Laboratory 544' },
+                'Mac lab': { area: 'maclab', name: 'Mac Laboratory' }
+            };
+            
+            // Create containers for each lab in the grid
+            Object.keys(labPositions).forEach(labName => {
+                const position = labPositions[labName];
+                const labContainer = document.createElement('div');
+                labContainer.className = 'lab-container';
+                labContainer.style.gridArea = position.area;
+                labContainer.style.minHeight = '80px';
+                
+                // Add extra margin to bottom containers - all set to 0
+                if (position.area === 'lab526' || position.area === 'lab544') {
+                    labContainer.style.marginBottom = '0px';
+                }
+                
+                // Add special style for Mac lab - set to 0
+                if (position.area === 'maclab') {
+                    labContainer.style.marginTop = '0px';
+                }
+                
+                // Add visible lab header before the lab section
+                const labHeader = document.createElement('div');
+                labHeader.className = 'lab-header';
+                labHeader.textContent = position.name;
+                labHeader.style.backgroundColor = 'blue'; // Changed to pure blue to match admin header
+                labHeader.style.color = 'white';
+                labHeader.style.padding = '5px 8px'; 
+                labHeader.style.textAlign = 'center';
+                labHeader.style.fontWeight = 'bold';
+                labHeader.style.fontSize = '1rem';
+                labHeader.style.marginBottom = '0';
+                labHeader.style.borderTopLeftRadius = '3px';
+                labHeader.style.borderTopRightRadius = '3px';
+                labHeader.style.borderBottom = '1px solid #0000cc'; // Adjusted border color
+                labContainer.appendChild(labHeader);
+                
+                // Check if we have data for this lab
+                if (labSchedules[labName]) {
+                    // Create and add the lab section without the title (we already added it above)
+                    const labSection = createLabSection(labName, labSchedules[labName], false);
+                    labContainer.appendChild(labSection);
+                } else {
+                    // Create empty lab section with "No schedules" message (without duplicate title)
+                    const labSection = document.createElement('div');
+                    labSection.className = 'lab-section';
+                    labSection.style.borderTopLeftRadius = '0';
+                    labSection.style.borderTopRightRadius = '0';
+                    
+                    const noSchedules = document.createElement('div');
+                    noSchedules.className = 'no-schedules';
+                    noSchedules.textContent = 'No schedules available for this lab.';
+                    labSection.appendChild(noSchedules);
+                    
+                    labContainer.appendChild(labSection);
+                }
+                
+                gridWrapper.appendChild(labContainer);
+            });
+            
+            // Add the grid wrapper to the container
+            labsContainer.appendChild(gridWrapper);
+            
+            // Handle additional labs not in our layout (if any)
+            labNames.forEach(labName => {
+                if (!labPositions[labName]) {
+                    const labContainer = document.createElement('div');
+                    labContainer.className = 'lab-container';
+                    labContainer.style.gridColumn = 'span 2';
+                    
+                    const labSection = createLabSection(labName, labSchedules[labName], true);
+                    labContainer.appendChild(labSection);
+                    
+                    labsContainer.appendChild(labContainer);
+                }
+            });
+        }
+        
+        function createLabSection(labName, schedules, includeTitle = true) {
+            // Create the lab section
+            const labSection = document.createElement('div');
+            labSection.className = 'lab-section';
+            
+            // If we want to include the title inside the section (normally false now)
+            if (includeTitle) {
+                // Add the lab title
+                const labTitle = document.createElement('h3');
+                labTitle.className = 'lab-title';
+                labTitle.textContent = labName;
+                labTitle.style.padding = '8px 10px'; /* Reduced padding */
+                labTitle.style.fontSize = '1.1rem'; /* Reduced font size */
+                labSection.appendChild(labTitle);
+            } else {
+                // No title needed in the section, since it's in the header
+                labSection.style.borderTopLeftRadius = '0';
+                labSection.style.borderTopRightRadius = '0';
+            }
+            
+            // Check if we have schedules for this lab
+            if (!schedules || schedules.length === 0) {
+                const noSchedules = document.createElement('div');
+                noSchedules.className = 'no-schedules';
+                noSchedules.textContent = 'No schedules available for this lab.';
+                labSection.appendChild(noSchedules);
+                return labSection;
+            }
+            
+            // Group schedules by day
+            const schedulesByDay = {};
+            schedules.forEach(schedule => {
+                if (!schedulesByDay[schedule.day_of_week]) {
+                    schedulesByDay[schedule.day_of_week] = [];
+                }
+                schedulesByDay[schedule.day_of_week].push(schedule);
+            });
+            
+            // Sort days in order: Monday, Tuesday, etc.
+            const days = Object.keys(schedulesByDay);
+            const dayOrder = {
+                'Monday': 1,
+                'Tuesday': 2,
+                'Wednesday': 3,
+                'Thursday': 4,
+                'Friday': 5,
+                'Saturday': 6,
+                'Sunday': 7
+            };
+            
+            days.sort((a, b) => dayOrder[a] - dayOrder[b]);
+            
+            // Create the schedules table
+            const table = document.createElement('table');
+            table.className = 'schedules-table';
+            
+            // Add table header
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            const headers = ['Time', 'Status', 'Max Capacity', 'Subject', 'Notes'];
+            
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+            
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            // Add table body
+            const tbody = document.createElement('tbody');
+            
+            // Check if we have any days
+            if (days.length === 0) {
+                const emptyRow = document.createElement('tr');
+                const emptyCell = document.createElement('td');
+                emptyCell.colSpan = headers.length;
+                emptyCell.className = 'no-schedules';
+                emptyCell.textContent = 'No schedule days defined.';
+                emptyRow.appendChild(emptyCell);
+                tbody.appendChild(emptyRow);
+            } else {
+                days.forEach(day => {
+                    // Add day header row
+                    const dayRow = document.createElement('tr');
+                    dayRow.className = 'day-label';
+                    
+                    const dayCell = document.createElement('td');
+                    dayCell.colSpan = headers.length;
+                    dayCell.textContent = day;
+                    dayRow.appendChild(dayCell);
+                    
+                    tbody.appendChild(dayRow);
+                    
+                    // Sort schedules by start time
+                    const daySchedules = schedulesByDay[day];
+                    daySchedules.sort((a, b) => {
+                        return a.start_time.localeCompare(b.start_time);
+                    });
+                    
+                    // Add schedule rows
+                    daySchedules.forEach(schedule => {
+                        const row = document.createElement('tr');
+                        
+                        // Time cell - Convert to 12-hour format with AM/PM
+                        const timeCell = document.createElement('td');
+                        const startTime12h = formatTime(schedule.start_time);
+                        const endTime12h = formatTime(schedule.end_time);
+                        timeCell.textContent = `${startTime12h} - ${endTime12h}`;
+                        row.appendChild(timeCell);
+                        
+                        // Status cell
+                        const statusCell = document.createElement('td');
+                        let statusClass = 'status-available';
+                        
+                        if (schedule.title === 'Reserved') {
+                            statusClass = 'status-reserved';
+                        } else if (schedule.title === 'Maintenance') {
+                            statusClass = 'status-maintenance';
+                        } else if (schedule.title === 'Class in Session') {
+                            statusClass = 'status-class';
+                        }
+                        
+                        statusCell.innerHTML = `<span class="${statusClass}">${schedule.title}</span>`;
+                        row.appendChild(statusCell);
+                        
+                        // Max capacity cell
+                        const capacityCell = document.createElement('td');
+                        capacityCell.textContent = schedule.max_capacity || 'N/A';
+                        row.appendChild(capacityCell);
+                        
+                        // Course cell
+                        const courseCell = document.createElement('td');
+                        courseCell.textContent = schedule.course || 'N/A';
+                        row.appendChild(courseCell);
+                        
+                        // Notes cell
+                        const notesCell = document.createElement('td');
+                        notesCell.textContent = schedule.description || 'N/A';
+                        row.appendChild(notesCell);
+                        
+                        tbody.appendChild(row);
+            });
+        });
+            }
+            
+            table.appendChild(tbody);
+            labSection.appendChild(table);
+            
+            return labSection;
+        }
+
+        // Add a helper function to convert 24-hour time to 12-hour format with AM/PM
+        function formatTime(time24h) {
+            if (!time24h) return 'N/A';
+            
+            // If already has AM/PM, return as is
+            if (time24h.toLowerCase().includes('am') || time24h.toLowerCase().includes('pm')) {
+                return time24h;
+            }
+            
+            // Parse time (format expected: HH:MM)
+            const [hours, minutes] = time24h.split(':').map(num => parseInt(num, 10));
+            
+            if (isNaN(hours) || isNaN(minutes)) {
+                return time24h; // Return original if parsing fails
+            }
+            
+            let period = 'AM';
+            let hours12 = hours;
+            
+            if (hours >= 12) {
+                period = 'PM';
+                hours12 = hours === 12 ? 12 : hours - 12;
+            }
+            
+            // Convert 0 (midnight) to 12 AM
+            if (hours12 === 0) {
+                hours12 = 12;
+            }
+            
+            return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
+        }
+    </script>
+</body>
+</html> 
